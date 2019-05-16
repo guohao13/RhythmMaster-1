@@ -2,6 +2,7 @@ package song;
 
 import java.awt.Color;
 
+//test comment
 
 public class BeatMap {
 	
