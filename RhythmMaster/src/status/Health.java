@@ -46,7 +46,7 @@ public class Health {
 	
 	
 	
-	
+	/*
 	public static void main(String[] args) {
 		Health h = new Health();
 		h.updateHistory(true);
@@ -71,4 +71,5 @@ public class Health {
 		h.resetHistory();
 		System.out.println("sum = " + h.sumMovingWindow + " % = " + h.getHistoryHitPercent());
 	}
+	*/
 }

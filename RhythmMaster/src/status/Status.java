@@ -16,6 +16,18 @@ public class Status {
 		this.msgLog = new ArrayDeque<>(MAX_MSGLOG_SIZE);
 	}
 	
+	public int getScore() {
+		return this.currentScore;
+	}
+	
+	public Health getHealth() {
+		return this.currentHealth;
+	}
+	
+	public ArrayDeque<Message> getMsgLog() {
+		return this.msgLog;
+	}
+	
 	public void updateStatus(int notesHit, int notesMissed) {
 		this.currentScore += notesHit * 10;
 		this.currentScore -= notesHit * 5;
