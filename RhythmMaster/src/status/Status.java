@@ -6,7 +6,7 @@ public class Status {
 	
 	private static final int MAX_MSGLOG_SIZE = 50;
 	
-	private int currentScore;	// cum point value of notes hit
+	private int currentScore;		// cumulative point value of notes hit
 	private Health currentHealth;	// moving window of last 40 bits
 	private ArrayDeque<Message> msgLog;
 	
