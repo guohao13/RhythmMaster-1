@@ -5,11 +5,13 @@ import java.awt.Color;
 public class HitBar {
 
 	private float tolerance = 0.25f;
-	private Color currColor;
 	
-	HitBar(float f, Color c) {
-		this.tolerance = f;
-		this.currColor = c;
+	HitBar() {
+		
+	}
+	
+	HitBar(float tol) {
+		this.tolerance = tol;
 	}
 	
 	
@@ -23,11 +25,7 @@ public class HitBar {
 		}
 	}
 	
-	public Color getCurrColor() {
-		return this.currColor;
-	}
-	
-	public void setCurrColor(Color c) {
-		this.currColor = c;
+	public void setColor(Color c) {
+		// GUI hook to set hit bar color
 	}
 }

@@ -16,8 +16,6 @@ public class Song {
 	
 	
 	public Song(String fileName) {
-		//setFile(fileName);
-		//setBeatMap();
 		processFile(fileName);
 	}
 	
@@ -47,12 +45,9 @@ public class Song {
 			for(int tickIndex = 0; tickIndex < lengthInTicks; tickIndex++) {
 				for(int railIndex = 0; railIndex < NUM_RAILS; railIndex++) {
 					int x = fileScanner.nextInt();
-					System.out.print(x + " ");
 					railData[railIndex][tickIndex] = intToBool(x);
 				}
-				System.out.println();
 			}
-			System.out.println("railData " + railData.length + " " + railData[0].length);
 			this.beatMap = new BeatMap(railData);
 		}
 	}
@@ -60,22 +55,7 @@ public class Song {
 	private boolean intToBool(int x) {
 		return x == 1;
 	}
-	
-	public void load() {
-		
-	}
-	
-	public void play() {
-		
-	}
-	
-	public void stop() {
-		
-	}
-	
-	public void setSong(String songName) {
-		
-	}
+
 	
 	public boolean[] getBitsAt(int index) {
 		return beatMap.getRailBitsAt(index);
