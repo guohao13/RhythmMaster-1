@@ -5,6 +5,7 @@ import java.awt.event.ActionListener;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JSlider;
 
 public class SettingsScreenController extends ScreenController {
 	
@@ -24,17 +25,21 @@ public class SettingsScreenController extends ScreenController {
 	}
 	
 	private void setupButtons() {
-		JButton button = new JButton(new ImageIcon(Main.class.getResource("../Images/testButton.png")));
-		button.setBounds(300,500,200,100);
-		button.setContentAreaFilled(false);
-		button.setBorderPainted(false);
+		ImageIcon settingsIcon = new ImageIcon(Main.class.getResource("../Images/SETTINGS_head.png"));
+		JButton settingsButton = new JButton(settingsIcon);
+		settingsButton.setBounds(1280/2 - settingsIcon.getIconWidth()/2, 720/4 - settingsIcon.getIconHeight()/2, settingsIcon.getIconWidth(), settingsIcon.getIconHeight());
+		settingsButton.setContentAreaFilled(false);
+		settingsButton.setBorderPainted(false);
 		
-		button.addActionListener(new ActionListener() {
+		settingsButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
-				requestScreenChangeTo(Screen.GAME);
 			}
 		});
 		
-		screenCanvas.addButton(button);
+		screenCanvas.addButton(settingsButton);
+		
+		JSlider volumeSlider = new JSlider();
+		
+		
 	}
 }

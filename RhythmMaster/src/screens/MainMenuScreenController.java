@@ -15,26 +15,58 @@ public class MainMenuScreenController extends ScreenController {
 		setupCanvas();
 	}
 	
+	
 	@Override
 	public Canvas setupCanvas() {
 		screenCanvas = new Canvas();
 		screenCanvas.setBackground(screenBackgroundPath);
 		setupButtons();
+		setupText();
 		return screenCanvas;
 	}
 	
 	private void setupButtons() {
-		JButton button = new JButton(new ImageIcon(Main.class.getResource("../Images/testButton.png")));
-		button.setBounds(100,500,200,100);
+		ImageIcon menuIcon = new ImageIcon(Main.class.getResource("../Images/MENU.png"));
+		JButton button = new JButton(menuIcon);
+		button.setBounds(1280/2 - menuIcon.getIconWidth()/2, 720/4 - menuIcon.getIconHeight()/2, menuIcon.getIconWidth(), menuIcon.getIconHeight());
 		button.setContentAreaFilled(false);
 		button.setBorderPainted(false);
 		
-		button.addActionListener(new ActionListener() {
+		screenCanvas.addButton(button);
+		
+		ImageIcon startGameIcon = new ImageIcon(Main.class.getResource("../Images/StartGame.png"));
+		JButton startGameButton = new JButton(startGameIcon);
+		startGameButton.setBounds(1280/4 - startGameIcon.getIconWidth()/2, 720*2/3 - startGameIcon.getIconHeight()/2, startGameIcon.getIconWidth(), startGameIcon.getIconHeight());
+		startGameButton.setContentAreaFilled(false);
+		startGameButton.setBorderPainted(false);
+		
+		startGameButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
 				requestScreenChangeTo(Screen.SONG_MENU);
 			}
 		});
+		screenCanvas.addButton(startGameButton);
 		
-		screenCanvas.addButton(button);
+		ImageIcon settingsIcon = new ImageIcon(Main.class.getResource("../Images/Settings.png"));
+		JButton settingsButton = new JButton(settingsIcon);
+		settingsButton.setBounds(1280*3/4 - settingsIcon.getIconWidth()/2, 720*2/3 - settingsIcon.getIconHeight()/2, settingsIcon.getIconWidth(), settingsIcon.getIconHeight());
+		settingsButton.setContentAreaFilled(false);
+		settingsButton.setBorderPainted(false);
+		
+		settingsButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent event) {
+				requestScreenChangeTo(Screen.SETTINGS);
+			}
+		});
+		
+		screenCanvas.addButton(settingsButton);
+		
+		
+	}
+	
+	private void setupText() {
+		ImageIcon menuIcon = new ImageIcon(Main.class.getResource("../Images/MENU.png"));
+		
+		
 	}
 }

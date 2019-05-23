@@ -1,5 +1,6 @@
 package screens;
 
+import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.event.ActionListener;
@@ -35,6 +36,12 @@ public class Canvas extends JPanel {
 		add(button);
 		repaint();
 		return button;
+	}
+	
+	public Component addComponent(Component c) {
+		add(c);
+		repaint();
+		return c;
 	}
 	
 	public void removeButtonListeners() {
