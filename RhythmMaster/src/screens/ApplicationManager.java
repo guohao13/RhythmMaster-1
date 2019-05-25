@@ -10,13 +10,11 @@ public class ApplicationManager implements Observer {
 	
 	public ScreenController currentScreen;
 	public DisplayManager displayManager;
-	public MusicManager musicManager;
 	
 	public boolean screenIsFirst = false;
 	
 	public ApplicationManager() {
 		displayManager = new DisplayManager();
-		musicManager = new MusicManager();
 		toScreen(Screen.MAIN_MENU);
 	}
 	
@@ -26,8 +24,6 @@ public class ApplicationManager implements Observer {
 	}
 	
 	public void toScreen(Screen screen) {
-		if(musicManager.hasClip())
-			musicManager.stopClip();
 		if(currentScreen != null) {
 			currentScreen.exitAction(screen);
 			currentScreen.deleteObservers();
@@ -55,6 +51,5 @@ public class ApplicationManager implements Observer {
         
         currentScreen.addObserver(this);
         displayManager.setCanvas(currentScreen.getScreenCanvas());
-        musicManager.playClip(currentScreen.getScreenMusicPath(), MusicManager.LOOP_CONTINUOUSLY);
 	}
 }

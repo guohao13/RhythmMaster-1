@@ -9,16 +9,22 @@ import javax.sound.sampled.FloatControl;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
-public class MusicManager {
+public class SoundPlayer {
 	
 	public static final int LOOP_CONTINUOUSLY = Clip.LOOP_CONTINUOUSLY; 
 	private AudioInputStream audioIn;
 	private Clip currClip;
 	private String currPath;
 	
-	public MusicManager() {
+	public SoundPlayer() {
 		audioIn = null;
 		currClip = null;		
+	}
+	
+	public SoundPlayer(String path) {
+		audioIn = null;
+		currClip = null;		
+		playClip(path);
 	}
 	
 	public void playClip(String path) {
