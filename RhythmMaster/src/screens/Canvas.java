@@ -1,5 +1,6 @@
 package screens;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.Image;
@@ -15,15 +16,20 @@ public class Canvas extends JPanel {
 	private static final long serialVersionUID = 1L;
 	private Image background;
 	private List<JButton> canvasButtons = new ArrayList<JButton>();
+	private List<Drawable> drawables = new ArrayList<Drawable>();
 	
 	public Canvas() {
 		setLayout(null);
 	}
+	
 	   
 	@Override
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		g.drawImage(background, 0, 0, ApplicationManager.SCREEN_WIDTH, ApplicationManager.SCREEN_HEIGHT, this);
+		for (Drawable d : drawables) {
+			d.draw(g);
+		}
 	}
    
 	public void setBackground(String path) {
@@ -42,6 +48,12 @@ public class Canvas extends JPanel {
 		add(c);
 		repaint();
 		return c;
+	}
+	
+	public Drawable addDrawable(Drawable d) {
+		drawables.add(d);
+		repaint();
+		return d;
 	}
 	
 	public void removeButtonListeners() {
