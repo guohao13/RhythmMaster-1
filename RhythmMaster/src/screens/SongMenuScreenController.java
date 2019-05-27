@@ -12,7 +12,7 @@ public class SongMenuScreenController extends ScreenController {
 		screenType = Screen.SONG_MENU;
 		screenMusicPath = "../Sounds/BadApple.wav";
 		screenBackgroundPath = "../Images/testOtherBackground.jpg";
-		setupCanvas();
+		setupDisplayAndMusic();
 	}
 	
 	@Override

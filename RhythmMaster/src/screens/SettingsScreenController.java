@@ -22,7 +22,7 @@ public class SettingsScreenController extends ScreenController {
 		screenType = Screen.SETTINGS;
 		screenMusicPath = "../Sounds/BadApple.wav";
 		screenBackgroundPath = "../Images/testOtherBackground.jpg";
-		setupCanvas();
+		setupDisplayAndMusic();
 	}
 
 	@Override
