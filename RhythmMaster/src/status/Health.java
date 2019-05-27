@@ -50,33 +50,5 @@ public class Health {
 	 * eg: last 5 history entries are true
 	 * then send a STREAK message
 	 */
-	
-	
-	
-	/*
-	public static void main(String[] args) {
-		Health h = new Health();
-		h.updateHistory(true);
-		h.updateHistory(true);
-		System.out.println("sum = " + h.sumMovingWindow + " % = " + h.getHistoryHitPercent());
-		for(int x = 0; x < 39; x++) {
-			h.updateHistory(false);
-		}
-		System.out.println("sum = " + h.sumMovingWindow + " % = " + h.getHistoryHitPercent());
-		h.updateHistory(true);
-		h.updateHistory(true);
-		System.out.println("sum = " + h.sumMovingWindow + " % = " + h.getHistoryHitPercent());
-		h.updateHistory(false);
-		System.out.println("sum = " + h.sumMovingWindow + " % = " + h.getHistoryHitPercent());
-		h.updateHistory(true);
-		h.updateHistory(true);
-		System.out.println("sum = " + h.sumMovingWindow + " % = " + h.getHistoryHitPercent());
-		for(int x = 0; x < 39; x++) {
-			h.updateHistory(false);
-		}
-		System.out.println("sum = " + h.sumMovingWindow + " % = " + h.getHistoryHitPercent());
-		h.resetHistory();
-		System.out.println("sum = " + h.sumMovingWindow + " % = " + h.getHistoryHitPercent());
-	}
-	*/
+
 }
