@@ -10,7 +10,7 @@ public class Status {
 	private Health currentHealth;	// moving window of last 40 bits
 	private ArrayDeque<Message> msgLog;
 	
-	Status() {
+	public Status() {
 		this.currentScore = 0;
 		this.currentHealth = new Health();
 		this.msgLog = new ArrayDeque<>(MAX_MSGLOG_SIZE);
@@ -51,4 +51,11 @@ public class Status {
 		this.msgLog.addLast(m);
 	}
 	
+	public float getHP() {
+		return(currentHealth.getHistoryHitPercent());
+	}
+	
+	public int getScore() {
+		return currentScore;
+	}
 }
