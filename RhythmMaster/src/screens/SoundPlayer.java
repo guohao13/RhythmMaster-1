@@ -11,7 +11,7 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 
 public class SoundPlayer {
 	
-	public static final int LOOP_CONTINUOUSLY = Clip.LOOP_CONTINUOUSLY; 
+	public static int LOOP_CONTINUOUSLY = Clip.LOOP_CONTINUOUSLY; 
 	private AudioInputStream audioIn;
 	private Clip currClip;
 	private String currPath;
@@ -40,6 +40,7 @@ public class SoundPlayer {
 			currClip.start();
 			currClip.loop(loops);
 			currPath = path;
+			setVolume(ApplicationManager.VOLUME);
 		} catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
 			System.out.println("Unable to play song at: " + path);
 			e.printStackTrace();
@@ -76,5 +77,6 @@ public class SoundPlayer {
 		FloatControl volume = (FloatControl) currClip.getControl(FloatControl.Type.MASTER_GAIN);
 		float range = volume.getMaximum() - volume.getMinimum();
 		volume.setValue((range * desired) + volume.getMinimum());
+		ApplicationManager.VOLUME = desired;
 	}
 }

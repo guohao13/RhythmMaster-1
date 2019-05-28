@@ -3,6 +3,8 @@ package screens;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import javax.swing.AbstractAction;
 import javax.swing.ActionMap;
@@ -10,11 +12,18 @@ import javax.swing.ImageIcon;
 import javax.swing.InputMap;
 import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
+
+import status.Status;
+
 
 public class GameScreenController extends ScreenController{
 
+	Timer winLossTimer;
+	Status playerStatus;
 	SoundPlayer gameSongPlayer;
+	static final float MINIMUM_HP = 0f;
 	static final String[] SONG_OPTIONS = {	"../Sounds/Butterfly.wav",
 											"../Sounds/BadApple.wav" };
 	
@@ -23,7 +32,8 @@ public class GameScreenController extends ScreenController{
 		screenMusicPath = "";
 		screenBackgroundPath = "../Images/testOtherBackground.jpg";
 		setupDisplayAndMusic();
-		playGameSong(0);
+		playGameSong(ApplicationManager.SELECTION);
+		setupWinLossTimer();
 	}
 	
 	@Override
@@ -43,6 +53,7 @@ public class GameScreenController extends ScreenController{
 		
 		button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
+				gameSongPlayer.stopClip();
 				requestScreenChangeTo(Screen.MAIN_MENU);
 			}
 		});
@@ -106,10 +117,49 @@ public class GameScreenController extends ScreenController{
 	}
 	
 	private int timeToBeat(int clipTime) {
-		return (Math.floorDiv(clipTime, 60000)); // TODO: should multiply by BPM
+		System.out.println(clipTime);
+		return ((int)Math.floorDiv((long)clipTime, (60000000 / 120))); // TODO: should multiply by BPM, also this is mils should be micros
 	}
 	
-	public void playGameSong(int selection) {
+	private void playGameSong(int selection) {
 		gameSongPlayer = new SoundPlayer(SONG_OPTIONS[selection]);
+	}
+
+	private void setupWinLossTimer() {
+		playerStatus = new Status();
+		
+		TimerTask checkHPLoss = new TimerTask() {
+			@Override
+	        public void run() {
+				if (playerStatus.getHP() < MINIMUM_HP)
+					handleLoss();
+	        }
+		};
+		
+		TimerTask endOfSongWin = new TimerTask() {
+			@Override
+	        public void run() {
+				handleWin();
+		    }
+		};
+		
+		winLossTimer = new Timer("winLossTimer");
+		winLossTimer.scheduleAtFixedRate(checkHPLoss, 0, 100);
+		winLossTimer.schedule(endOfSongWin, Math.floorDiv(gameSongPlayer.getClipLength(), 1000) + 1);
+	}
+	
+	private void handleLoss() {
+		winLossTimer.cancel();
+		int timeSurvived = Math.floorDiv(gameSongPlayer.getClipTime(), 1000000);
+		gameSongPlayer.stopClip();
+		JOptionPane.showMessageDialog(screenCanvas, "You lost \nYour hit percent was too low \nBut you survived " + timeSurvived + " seconds!", "Sorry", JOptionPane.WARNING_MESSAGE);
+		requestScreenChangeTo(Screen.MAIN_MENU);
+	}
+	
+	private void handleWin() {
+		winLossTimer.cancel();
+		gameSongPlayer.stopClip();
+		JOptionPane.showMessageDialog(screenCanvas, "You won! \nYou scored " + playerStatus.getScore(), "Congratulations!", JOptionPane.WARNING_MESSAGE);
+		requestScreenChangeTo(Screen.MAIN_MENU);		
 	}
 }
