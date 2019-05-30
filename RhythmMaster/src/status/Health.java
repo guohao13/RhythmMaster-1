@@ -11,15 +11,15 @@ public class Health {
 	public int sumMovingWindow;		// used to avoid processing hitHistory every tick
 	
 	Health() {
-		this.hitHistory = new ArrayDeque<>(MOVING_WINDOW_SIZE);
+		hitHistory = new ArrayDeque<>(MOVING_WINDOW_SIZE);
 		// seed hit history so that beginning misses don't cause a lose
 		for(int a = 0; a < WINDOW_SEED_VALUE; a++) 
-			this.hitHistory.add(true);
+			hitHistory.add(true);
 		
-		this.sumMovingWindow = 0;
+		sumMovingWindow = 0;
 	}
 	
-	public float updateHistoryGetPercent(boolean b) {
+	public void updateHistory(boolean b) {
 		if(hitHistory.size() == MOVING_WINDOW_SIZE) {
 			boolean val = hitHistory.removeFirst();
 			if(val)		
@@ -29,8 +29,6 @@ public class Health {
 		hitHistory.addLast(new Boolean(b));
 		if(b)
 			sumMovingWindow++;
-		
-		return (float) sumMovingWindow / hitHistory.size();
 	}
 	
 	public float getHistoryHitPercent() {
@@ -39,16 +37,4 @@ public class Health {
 		else
 			return (float)sumMovingWindow / hitHistory.size();
 	}
-	
-	public void resetHistory() {
-		hitHistory = new ArrayDeque<>(MOVING_WINDOW_SIZE);
-		sumMovingWindow = 0;
-	}
-	
-	/*
-	 * METHODS TO CHECK FOR "COMBOS" FOR MESSAGES
-	 * eg: last 5 history entries are true
-	 * then send a STREAK message
-	 */
-
 }

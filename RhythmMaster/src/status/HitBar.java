@@ -11,17 +11,17 @@ public class HitBar {
 	}
 	
 	HitBar(float tol) {
-		this.tolerance = tol;
+		tolerance = tol;
 	}
 	
 	
 	public float getTolerance() {
-		return this.tolerance;
+		return tolerance;
 	}
 	
 	public void setTolerance(float f) {
 		if(0 < f && f < 1) {
-			this.tolerance = f;
+			tolerance = f;
 		}
 	}
 	

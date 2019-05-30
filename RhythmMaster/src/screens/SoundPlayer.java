@@ -79,4 +79,8 @@ public class SoundPlayer {
 		volume.setValue((range * desired) + volume.getMinimum());
 		ApplicationManager.VOLUME = desired;
 	}
+	
+	public boolean isPlaying() {
+		return currClip.isActive();
+	}
 }

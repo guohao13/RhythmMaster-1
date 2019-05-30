@@ -2,10 +2,13 @@ package song;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Song {
-	
+	static final String[] SONG_PATHS = { 	"RhythmMaster/src/levels/butterfly.txt",	// TODO: change to relative paths
+											"RhythmMaster/src/levels/badapple.txt" };
 	private static final int NUM_RAILS = 4;
 	
 	private String songName;
@@ -13,10 +16,10 @@ public class Song {
 	private int bpm = 0;
 	private int lengthInTicks;
 	private BeatMap beatMap;
+	private ArrayList<ArrayDeque<Integer>> timeMap;
 	
-	
-	public Song(String fileName) {
-		processFile(fileName);
+	public Song(int selection) {	
+		processFile(SONG_PATHS[selection]);
 	}
 	
 	private void processFile(String s) {
@@ -25,30 +28,30 @@ public class Song {
 		try {
 			musicFile = new File(s);
 		} catch (NullPointerException e) {
-			// can't find song file
 			musicFile = null;
 			e.printStackTrace();
 		}
 		
 		if(musicFile != null) {
 			try {
-				this.fileScanner = new Scanner(musicFile);
+				fileScanner = new Scanner(musicFile);
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
 			}
 			
-			this.songName = fileScanner.nextLine();
-			this.bpm = Integer.parseInt(fileScanner.nextLine());
-			this.lengthInTicks = Integer.parseInt(fileScanner.nextLine());
+			songName = fileScanner.nextLine();
+			bpm = Integer.parseInt(fileScanner.nextLine());
+			lengthInTicks = Integer.parseInt(fileScanner.nextLine());
 					
-			boolean[][] railData = new boolean[NUM_RAILS][this.lengthInTicks];
+			boolean[][] railData = new boolean[NUM_RAILS][lengthInTicks];
 			for(int tickIndex = 0; tickIndex < lengthInTicks; tickIndex++) {
 				for(int railIndex = 0; railIndex < NUM_RAILS; railIndex++) {
 					int x = fileScanner.nextInt();
 					railData[railIndex][tickIndex] = intToBool(x);
 				}
 			}
-			this.beatMap = new BeatMap(railData);
+			beatMap = new BeatMap(railData);
+			timeMap = beatMap.getTimeMap();
 		}
 	}
 	
@@ -56,19 +59,22 @@ public class Song {
 		return x == 1;
 	}
 
-	
 	public boolean[] getBitsAt(int index) {
 		return beatMap.getRailBitsAt(index);
+	}
+
+	public int getBpm() {
+		return bpm;
+	}
+	
+	public ArrayList<ArrayDeque<Integer>> getTimeMap() {
+		return timeMap;
 	}
 	
 	public void print() {
 		System.out.println("Song name: " + this.songName);
 		System.out.println("BPM: " + this.bpm);
-		this.beatMap.print();
+		beatMap.print();
 	}
-	
-	public static void main(String[] args) {
-		Song s = new Song("testSong");
-		s.print();
-	}
+
 }

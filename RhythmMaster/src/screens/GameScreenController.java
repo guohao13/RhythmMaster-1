@@ -3,6 +3,8 @@ package screens;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -15,6 +17,7 @@ import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 
+import song.Song;
 import status.Status;
 
 
@@ -23,14 +26,20 @@ public class GameScreenController extends ScreenController{
 	Timer winLossTimer;
 	Status playerStatus;
 	SoundPlayer gameSongPlayer;
+	Song currentSong;
+	int missedNoteTime;
+	ArrayList<ArrayDeque<Integer>> timeMap;
 	static final float MINIMUM_HP = 0f;
 	static final String[] SONG_OPTIONS = {	"../Sounds/Butterfly.wav",
 											"../Sounds/BadApple.wav" };
+	static final int TIME_OFFSET = 5000000; // 5 seconds for marker to reach hitbar
+											// TODO: calc offset using y_velocity of marker	
 	
 	public GameScreenController() {
 		screenType = Screen.GAME;
 		screenMusicPath = "";
 		screenBackgroundPath = "../Images/testOtherBackground.jpg";
+		setupBeatmap();
 		setupDisplayAndMusic();
 		playGameSong(ApplicationManager.SELECTION);
 		setupWinLossTimer();
@@ -90,35 +99,55 @@ public class GameScreenController extends ScreenController{
 		}
 
 		public void actionPerformed(ActionEvent e) {
-			int currBeat = getCurrentBeat();
+			int clipTimeOfInput = gameSongPlayer.getClipTime();
 			switch (e.getActionCommand()) {
 				case "RAIL_ZERO":
-					handleKeyPressed(0, currBeat);
+					handleKeyPressed(0, clipTimeOfInput);
 					break;
 				case "RAIL_ONE":
-					handleKeyPressed(1, currBeat);
+					handleKeyPressed(1, clipTimeOfInput);
 					break;
 				case "RAIL_TWO":
-					handleKeyPressed(2, currBeat);
+					handleKeyPressed(2, clipTimeOfInput);
 					break;
 				case "RAIL_THREE":
-					handleKeyPressed(3, currBeat);
+					handleKeyPressed(3, clipTimeOfInput);
 					break;
 			}
 		}
 	}
 	
-	public void handleKeyPressed (int railNumber, int beatNumber) {
-		System.out.println("Key for rail " + railNumber + " pressed at Beat " + beatNumber);
+	public void handleKeyPressed (int railNumber, int clipTimeOfInput) {
+		int beatIndex = -1;
+		if(clipTimeOfInput < 0) 
+			playerStatus.updateStatus(false);	// key input before song clip has started playing
+		else {
+			beatIndex = timeToBeat(clipTimeOfInput);
+			int timeOfBeat = beatToTime(beatIndex);
+			int tolerance = 1000000; // TODO: get tolerance from settings screen
+			if(Math.abs(clipTimeOfInput - timeOfBeat) <= tolerance) {
+				playerStatus.updateStatus(true);
+			}
+			else
+				playerStatus.updateStatus(false);
+		}
+		System.out.println("Key for rail " + railNumber + " pressed at Beat " + beatIndex);	
 	}
 	
 	public int getCurrentBeat() {
-		return timeToBeat(gameSongPlayer.getClipTime());
+		if(gameSongPlayer.isPlaying())
+			return timeToBeat(gameSongPlayer.getClipTime());
+		else
+			return -1;
 	}
 	
 	private int timeToBeat(int clipTime) {
 		System.out.println(clipTime);
 		return ((int)Math.floorDiv((long)clipTime, (60000000 / 120))); // TODO: should multiply by BPM, also this is mils should be micros
+	}
+	
+	private int beatToTime(int beatIndex) {
+		return beatIndex * 60000000;
 	}
 	
 	private void playGameSong(int selection) {
@@ -162,4 +191,12 @@ public class GameScreenController extends ScreenController{
 		JOptionPane.showMessageDialog(screenCanvas, "You won! \nYou scored " + playerStatus.getScore(), "Congratulations!", JOptionPane.WARNING_MESSAGE);
 		requestScreenChangeTo(Screen.MAIN_MENU);		
 	}
+	
+	private void setupBeatmap() {
+		currentSong = new Song(ApplicationManager.SELECTION);
+		timeMap = currentSong.getTimeMap();
+	}
+	
+	
+
 }

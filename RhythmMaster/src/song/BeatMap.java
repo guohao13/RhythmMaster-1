@@ -1,6 +1,8 @@
 package song;
 
 import java.awt.Color;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
 
 public class BeatMap {
 	
@@ -11,25 +13,29 @@ public class BeatMap {
 	private Rail[] rails;
 	private Color[] railColors;
 	private int lengthInTicks;
+	private ArrayList<ArrayDeque<Integer>> timeMap;
 	
 	BeatMap(boolean[][] railData) {
-		this.rails = new Rail[NUM_RAILS];
-		for(int x = 0; x < NUM_RAILS; x++) {
+		rails = new Rail[NUM_RAILS];
+		for(int x = 0; x < NUM_RAILS; x++)
 			rails[x] = new Rail();
-		}
-		this.lengthInTicks = railData[0].length;
+
+		lengthInTicks = railData[0].length;
 		setRailData(railData);
 		
-		this.railColors = new Color[NUM_RAILS];
+		railColors = new Color[NUM_RAILS];
 		setRailColors();
+		
+		timeMap = new ArrayList<>();
+		for(int x = 0; x < NUM_RAILS; x++) {
+			timeMap.add(rails[x].getTimeMap());
+		}
 	}
 	
 	private void setRailData(boolean[][] railData) {
-		// for each line AKA tick
 		for(int tickIndex = 0; tickIndex < this.lengthInTicks; tickIndex++) {
-			// for each rail set the bits @ tick
 			for(int railIndex = 0; railIndex < NUM_RAILS; railIndex++) {
-				this.rails[railIndex].setBitAt(tickIndex, railData[railIndex][tickIndex]);
+				rails[railIndex].setBitAt(tickIndex, railData[railIndex][tickIndex]);
 			}
 		}
 	}
@@ -50,10 +56,14 @@ public class BeatMap {
 
 	public void print() {
 		for(int x = 0; x < lengthInTicks; x++) {
-			System.out.print(this.rails[0].getBitAt(x) + " ");
-			System.out.print(this.rails[1].getBitAt(x) + " ");
-			System.out.print(this.rails[2].getBitAt(x) + " ");
-			System.out.println(this.rails[3].getBitAt(x));
+			System.out.print(rails[0].getBitAt(x) + " ");
+			System.out.print(rails[1].getBitAt(x) + " ");
+			System.out.print(rails[2].getBitAt(x) + " ");
+			System.out.println(rails[3].getBitAt(x));
 		}
+	}
+	
+	public ArrayList<ArrayDeque<Integer>> getTimeMap() {
+		return timeMap;
 	}
 }
