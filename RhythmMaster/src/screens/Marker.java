@@ -37,6 +37,10 @@ public class Marker extends DrawableRectangle {
 		return y_coord;
 	}
 	
+	public void addObserver(MissedNoteObserver obs) {
+		y_coord.addObserver(obs);
+	}
+	
 	public class ObservableYCoord extends Observable {
 		
 		Marker parent;

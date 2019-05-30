@@ -27,8 +27,7 @@ public class GameScreenController extends ScreenController{
 	Status playerStatus;
 	SoundPlayer gameSongPlayer;
 	Song currentSong;
-	int missedNoteTime;
-	ArrayList<ArrayDeque<Integer>> timeMap;
+	MissedNoteObserver missedNoteObs;
 	static final float MINIMUM_HP = 0f;
 	static final String[] SONG_OPTIONS = {	"../Sounds/Butterfly.wav",
 											"../Sounds/BadApple.wav" };
@@ -39,7 +38,7 @@ public class GameScreenController extends ScreenController{
 		screenType = Screen.GAME;
 		screenMusicPath = "";
 		screenBackgroundPath = "../Images/testOtherBackground.jpg";
-		setupBeatmap();
+		setupSongAndMissedNoteObs();
 		setupDisplayAndMusic();
 		playGameSong(ApplicationManager.SELECTION);
 		setupWinLossTimer();
@@ -125,9 +124,8 @@ public class GameScreenController extends ScreenController{
 			beatIndex = timeToBeat(clipTimeOfInput);
 			int timeOfBeat = beatToTime(beatIndex);
 			int tolerance = 1000000; // TODO: get tolerance from settings screen
-			if(Math.abs(clipTimeOfInput - timeOfBeat) <= tolerance) {
+			if(Math.abs(clipTimeOfInput - timeOfBeat) <= tolerance)
 				playerStatus.updateStatus(true);
-			}
 			else
 				playerStatus.updateStatus(false);
 		}
@@ -192,9 +190,9 @@ public class GameScreenController extends ScreenController{
 		requestScreenChangeTo(Screen.MAIN_MENU);		
 	}
 	
-	private void setupBeatmap() {
+	private void setupSongAndMissedNoteObs() {
 		currentSong = new Song(ApplicationManager.SELECTION);
-		timeMap = currentSong.getTimeMap();
+		missedNoteObs = new MissedNoteObserver(this);
 	}
 	
 	
