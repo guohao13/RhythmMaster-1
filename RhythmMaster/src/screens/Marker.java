@@ -6,11 +6,12 @@ import java.util.Observable;
 
 public class Marker extends DrawableRectangle {
 	private static final int SIDE_LENGTH = 50;
-	private static final int HITBAR_Y_COORD = 670;
+  private static final int HITBAR_Y_COORD = 670;
 	private static final int OBSERVER_WINDOW_SIZE = 50;
 	private static final int Y_COORD_STEP_SIZE = 5;
-	
-	private int railIndex;
+	private int railnumber;
+  
+  private int railIndex;
 	private ObservableYCoord y_coord;
 	public boolean isNearHitbar = false;
 
@@ -71,5 +72,4 @@ public class Marker extends DrawableRectangle {
 			}
 		}
 	}
-
 }

@@ -1,23 +1,17 @@
 package screens;
 
 import java.awt.Color;
-import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JSlider;
 
 public class SettingsScreenController extends ScreenController {
-
+	private int BAR_WIDTH=300;
+	DrawableRectangle volumeBar = new DrawableRectangle(1280/4 - 150, 720*3/4 - 25, BAR_WIDTH, 50, Color.RED), difficultyBar = new DrawableRectangle(1280*3/4 - 150, 720*3/4 - 25, BAR_WIDTH, 50, Color.RED);
 	public SettingsScreenController() {
 		screenType = Screen.SETTINGS;
 		screenMusicPath = "../Sounds/BadApple.wav";
@@ -31,14 +25,100 @@ public class SettingsScreenController extends ScreenController {
 		screenCanvas.setBackground(screenBackgroundPath);
 		setupButtons();
 		setupVolumeBar();
+		setupDifficultyBar();
 		return screenCanvas;
+	}
+	
+	private void setVolume() {
+		double volume = volumeBar.getWidth()/BAR_WIDTH;
+		
+	}
+	private void setDifficulty() {
+		double difficulty = difficultyBar.getWidth()/BAR_WIDTH;
+	}
+	
+	private void setupDifficultyBar() {
+		difficultyBar.setFilled(true);
+		screenCanvas.addDynamicDrawable(difficultyBar);
+		screenCanvas.addMouseListener(new MouseListener() {
+
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				// TODO Auto-generated method stub
+				update(e);
+			}
+
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void mouseExited(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void mousePressed(MouseEvent e) {
+				// TODO Auto-generated method stub
+				update(e);
+			}
+
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				// TODO Auto-generated method stub
+				update(e);
+			}
+			
+			public void update(MouseEvent e) {
+				int mouseX = e.getX();
+				int mouseY = e.getY();
+				System.out.println("clicked! at " + mouseX + ", " + mouseY);
+				if (mouseY > difficultyBar.y && mouseY < difficultyBar.y + difficultyBar.height && mouseX > difficultyBar.x && mouseX < difficultyBar.x+300) {
+					int newWidth = (mouseX > difficultyBar.x && mouseX < difficultyBar.x + 300) ? mouseX - difficultyBar.x : 0;
+					difficultyBar.setSize(newWidth, difficultyBar.height);
+					screenCanvas.repaint();
+				}
+				
+			} 
+			
+		});
+		screenCanvas.addMouseMotionListener(new MouseMotionListener() {
+
+			@Override
+			public void mouseDragged(MouseEvent e) {
+				// TODO Auto-generated method stub
+				update(e);
+			}
+
+			@Override
+			public void mouseMoved(MouseEvent e) {
+				// TODO Auto-generated method stub
+			}
+
+			public void update(MouseEvent e) {
+				int mouseX = e.getX();
+				int mouseY = e.getY();
+				System.out.println("clicked! at " + mouseX + ", " + mouseY);
+				if (mouseY > difficultyBar.y && mouseY < difficultyBar.y + difficultyBar.height && mouseX > difficultyBar.x && mouseX < difficultyBar.x+300) {
+					int newWidth = (mouseX > difficultyBar.x && mouseX < difficultyBar.x + 300) ? mouseX - difficultyBar.x : 0;
+					difficultyBar.setSize(newWidth, difficultyBar.height);
+					screenCanvas.repaint();
+				}
+				
+				
+			} 
+
+		});
 	}
 	
 	private void setupVolumeBar() {
 
-		DrawableRectangle volumeBar = new DrawableRectangle(1280/4 - 150, 720*3/4 - 25, 300, 50, Color.RED);
+		
 		volumeBar.setFilled(true);
-		screenCanvas.addDrawable(volumeBar);
+		screenCanvas.addDynamicDrawable(volumeBar);
 		screenCanvas.addMouseListener(new MouseListener() {
 
 			@Override

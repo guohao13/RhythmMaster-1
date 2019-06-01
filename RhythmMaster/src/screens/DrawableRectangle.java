@@ -44,4 +44,30 @@ public class DrawableRectangle extends Rectangle implements Drawable {
 		}
 	}
 
+	@Override
+	public void setCenterX(int x) {
+		// TODO Auto-generated method stub
+		this.x = x - this.width/2;
+		
+	}
+
+	@Override
+	public void setCenterY(int y) {
+		// TODO Auto-generated method stub
+		this.y = y - this.height/2;
+		
+	}
+
+	@Override
+	public void setCenter(int x, int y) {
+		// TODO Auto-generated method stub
+		setCenterX(x);
+		setCenterY(y);
+		
+	}
+	
+	public void setColor(Color c) {
+		this.c = c;
+	}
+
 }
