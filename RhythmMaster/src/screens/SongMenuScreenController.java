@@ -12,7 +12,7 @@ public class SongMenuScreenController extends ScreenController {
 		screenType = Screen.SONG_MENU;
 		screenMusicPath = "../Sounds/BadApple.wav";
 		screenBackgroundPath = "../Images/testOtherBackground.jpg";
-		setupCanvas();
+		setupDisplayAndMusic();
 	}
 	
 	@Override
@@ -67,5 +67,23 @@ public class SongMenuScreenController extends ScreenController {
 		});
 
 		screenCanvas.addButton(butterflyButton);
+				ApplicationManager.SELECTION = 0;
+				requestScreenChangeTo(Screen.SETTINGS);
+			}
+		});
+		screenCanvas.add(button);
+		
+		button = new JButton(new ImageIcon(Main.class.getResource("../Images/testButton.png")));
+		button.setBounds(200,400,200,100);
+		button.setContentAreaFilled(false);
+		button.setBorderPainted(false);
+		
+		button.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent event) {
+				ApplicationManager.SELECTION = 1;
+				requestScreenChangeTo(Screen.SETTINGS);
+			}
+		});
+		screenCanvas.addButton(button);
 	}
 }

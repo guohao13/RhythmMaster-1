@@ -7,16 +7,17 @@ public class ApplicationManager implements Observer {
 
 	public static final int SCREEN_HEIGHT = 720;
 	public static final int SCREEN_WIDTH = 1280;
+	public static float VOLUME = 1f;
+	public static int TOLERANCE = 0;
+	public static int SELECTION = 0; 
 	
 	public ScreenController currentScreen;
 	public DisplayManager displayManager;
-	public MusicManager musicManager;
 	
 	public boolean screenIsFirst = false;
 	
 	public ApplicationManager() {
 		displayManager = new DisplayManager();
-		musicManager = new MusicManager();
 		toScreen(Screen.MAIN_MENU);
 	}
 	
@@ -26,8 +27,6 @@ public class ApplicationManager implements Observer {
 	}
 	
 	public void toScreen(Screen screen) {
-		if(musicManager.hasClip())
-			musicManager.stopClip();
 		if(currentScreen != null) {
 			currentScreen.exitAction(screen);
 			currentScreen.deleteObservers();
@@ -55,6 +54,5 @@ public class ApplicationManager implements Observer {
         
         currentScreen.addObserver(this);
         displayManager.setCanvas(currentScreen.getScreenCanvas());
-        musicManager.playClip(currentScreen.getScreenMusicPath(), MusicManager.LOOP_CONTINUOUSLY);
 	}
 }

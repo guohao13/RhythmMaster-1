@@ -20,6 +20,8 @@ public class Canvas extends JPanel {
 	
 	public Canvas() {
 		setLayout(null);
+		setFocusable(true);
+		requestFocusInWindow();
 	}
 	
 	@Override

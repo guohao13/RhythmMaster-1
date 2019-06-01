@@ -9,16 +9,22 @@ import javax.sound.sampled.FloatControl;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
-public class MusicManager {
+public class SoundPlayer {
 	
-	public static final int LOOP_CONTINUOUSLY = Clip.LOOP_CONTINUOUSLY; 
+	public static int LOOP_CONTINUOUSLY = Clip.LOOP_CONTINUOUSLY; 
 	private AudioInputStream audioIn;
 	private Clip currClip;
 	private String currPath;
 	
-	public MusicManager() {
+	public SoundPlayer() {
 		audioIn = null;
 		currClip = null;		
+	}
+	
+	public SoundPlayer(String path) {
+		audioIn = null;
+		currClip = null;		
+		playClip(path);
 	}
 	
 	public void playClip(String path) {
@@ -34,6 +40,7 @@ public class MusicManager {
 			currClip.start();
 			currClip.loop(loops);
 			currPath = path;
+			setVolume(ApplicationManager.VOLUME);
 		} catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
 			System.out.println("Unable to play song at: " + path);
 			e.printStackTrace();
@@ -70,5 +77,10 @@ public class MusicManager {
 		FloatControl volume = (FloatControl) currClip.getControl(FloatControl.Type.MASTER_GAIN);
 		float range = volume.getMaximum() - volume.getMinimum();
 		volume.setValue((range * desired) + volume.getMinimum());
+		ApplicationManager.VOLUME = desired;
+	}
+	
+	public boolean isPlaying() {
+		return currClip.isActive();
 	}
 }

@@ -1,8 +1,8 @@
 package song;
 
 import java.awt.Color;
-
-//test comment
+import java.util.ArrayDeque;
+import java.util.ArrayList;
 
 public class BeatMap {
 	
@@ -12,26 +12,32 @@ public class BeatMap {
 
 	private Rail[] rails;
 	private Color[] railColors;
-	//private int currIndex;
-	private int bpm;
+	private int lengthInTicks;
+	private ArrayList<ArrayDeque<Integer>> timeMap;
 	
-	BeatMap() {
+	BeatMap(boolean[][] railData) {
 		rails = new Rail[NUM_RAILS];
-		railColors = new Color[NUM_RAILS];
-		setRailColors();
-		this.bpm = 100;
-	}
-	
-	BeatMap(boolean[][] bits, int bpm) {
-		rails = new Rail[NUM_RAILS];
-		setRailData();
-		railColors = new Color[NUM_RAILS];
-		setRailColors();
-		this.bpm = bpm;
-	}
-	
-	private void setRailData() {
+		for(int x = 0; x < NUM_RAILS; x++)
+			rails[x] = new Rail();
+
+		lengthInTicks = railData[0].length;
+		setRailData(railData);
 		
+		railColors = new Color[NUM_RAILS];
+		setRailColors();
+		
+		timeMap = new ArrayList<>();
+		for(int x = 0; x < NUM_RAILS; x++) {
+			timeMap.add(rails[x].getTimeMap());
+		}
+	}
+	
+	private void setRailData(boolean[][] railData) {
+		for(int tickIndex = 0; tickIndex < this.lengthInTicks; tickIndex++) {
+			for(int railIndex = 0; railIndex < NUM_RAILS; railIndex++) {
+				rails[railIndex].setBitAt(tickIndex, railData[railIndex][tickIndex]);
+			}
+		}
 	}
 	
 	private void setRailColors() {
@@ -48,4 +54,16 @@ public class BeatMap {
 		return railBits;
 	}
 
+	public void print() {
+		for(int x = 0; x < lengthInTicks; x++) {
+			System.out.print(rails[0].getBitAt(x) + " ");
+			System.out.print(rails[1].getBitAt(x) + " ");
+			System.out.print(rails[2].getBitAt(x) + " ");
+			System.out.println(rails[3].getBitAt(x));
+		}
+	}
+	
+	public ArrayList<ArrayDeque<Integer>> getTimeMap() {
+		return timeMap;
+	}
 }
