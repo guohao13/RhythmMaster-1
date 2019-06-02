@@ -183,12 +183,17 @@ public class GameScreenController extends ScreenController {
 			playerStatus.updateStatus(false);	// key input before song clip has started playing
 		else {
 			beatIndex = timeToBeat(clipTimeOfInput);
+			boolean[] beats = currentSong.getBitsAt(beatIndex);
 			int timeOfBeat = beatToTime(beatIndex);
 			int tolerance = 1000000; // TODO: get tolerance from settings screen
-			if(Math.abs(clipTimeOfInput - timeOfBeat) <= tolerance)
+			if(beats[railNumber] && Math.abs(clipTimeOfInput - timeOfBeat) <= tolerance) {
 				playerStatus.updateStatus(true);
-			else
+				System.out.println("  HIT ");
+			}
+			else {
 				playerStatus.updateStatus(false);
+				System.out.println("miss.... ");
+			}
 		}
 		System.out.println("Key for rail " + railNumber + " pressed at Beat " + beatIndex);	
 	}
@@ -202,11 +207,11 @@ public class GameScreenController extends ScreenController {
 	
 	private int timeToBeat(int clipTime) {
 		System.out.println(clipTime);
-		return ((int)Math.floorDiv((long)clipTime, (60000000 / 120))); // TODO: should multiply by BPM, also this is mils should be micros
+		return ((int)Math.floorDiv((long)clipTime, (60000000 / 60))); // TODO: should multiply by BPM, also this is mils should be micros
 	}
 	
 	private int beatToTime(int beatIndex) {
-		return beatIndex * 60000000;
+		return beatIndex * 60000000 / 60;
 	}
 	
 	private void playGameSong(int selection) {
@@ -234,6 +239,17 @@ public class GameScreenController extends ScreenController {
 		winLossTimer = new Timer("winLossTimer");
 		winLossTimer.scheduleAtFixedRate(checkHPLoss, 0, 100);
 		winLossTimer.schedule(endOfSongWin, Math.floorDiv(gameSongPlayer.getClipLength(), 1000) + 1);
+		
+		TimerTask beat = new TimerTask() {
+			int time = 0;
+			
+			@Override
+			public void run() {
+				System.out.println("Beat " + time++);
+			}
+		};
+		Timer t = new Timer();
+		t.scheduleAtFixedRate(beat, 0, 1000);
 	}
 	
 	private void handleLoss() {
