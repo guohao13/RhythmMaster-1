@@ -29,7 +29,8 @@ public class GameScreenController extends ScreenController {
 	int globalYOffset = -20;
 	int screenCenterX = 1280 / 2, screenCenterY =  680/ 2, railSpacing = 150, railWidth = 10, railHeight = 600, hitBarWidth = 700, hitBarHeight = 50;
 	int railTop = 60, rail1x = screenCenterX - railSpacing*3/2 - railWidth/2, rail2x = screenCenterX - railSpacing/2 - railWidth/2, rail3x = screenCenterX + railSpacing/2 - railWidth/2, rail4x = screenCenterX + railSpacing*3/2 - railWidth/2;
-	int dy = 5;
+	int dy = 1;
+	int markerIndex = 0;
 	DrawableRectangle hitBar;
 	List<Marker> markers = new ArrayList<Marker>();
 	Timer screenTimer;
@@ -42,7 +43,7 @@ public class GameScreenController extends ScreenController {
 	static final float MINIMUM_HP = 0f;
 	static final String[] SONG_OPTIONS = {	"../Sounds/Butterfly.wav",
 											"../Sounds/BadApple.wav" };
-	static final int TIME_OFFSET = 5000000; // 5 seconds for marker to reach hitbar
+	static final int TIME_OFFSET = 3000000; // 5 seconds for marker to reach hitbar
 											// TODO: calc offset using y_velocity of marker	
 	
 	public GameScreenController() {
@@ -55,37 +56,65 @@ public class GameScreenController extends ScreenController {
 		setupSongAndMissedNoteObs();
 		playGameSong(ApplicationManager.SELECTION);
 		setupWinLossTimer();
+		setupMarkerTimer();
 	}
 	
-	private void setupDemoMarkers() {
-		
-		markers.add(new Marker(rail1x, railTop,1));
-		markers.add(new Marker(rail2x, railTop,2));
-		markers.add(new Marker(rail3x, railTop,3));
-		markers.add(new Marker(rail4x, railTop,4));
-		
-		for(Marker m : markers) {
-			screenCanvas.addDynamicDrawable(m);
-		}
-		
+	private void setupMarkerTimer() {
+		markerIndex = 0;
 		Timer t = new Timer();
-		TimerTask tt = new TimerTask() {
-
+		TimerTask marker = new TimerTask() {
 			@Override
 			public void run() {
-				// TODO Auto-generated method stub
+				spawnMarkers();
+				markerIndex++;
+			}
+		};
+		
+		TimerTask markerPos = new TimerTask() {
+			@Override
+			public void run() {
+				// TODO: change to indexed for loop to accommodate deque
 				for(Marker m : markers) {
 					m.setLocation(m.x, m.y + dy);
 					if (m.getY() > 610) {
-						t.cancel();
+						// remove from markers
+						// remove from screenCanvas dynamicDrawables
 					}
 				}
 				screenCanvas.repaint();
 			}
-			
 		};
-		t.scheduleAtFixedRate(tt, 0, 10);
-		
+		t.scheduleAtFixedRate(marker, 0, 500);
+		t.scheduleAtFixedRate(markerPos, 0, 10);
+	}
+	
+	private void spawnMarkers() {
+		boolean[] beats = currentSong.getBitsAt(markerIndex);
+		Marker temp;
+				
+		for(int index = 0; index < 4; index++) {
+			if(beats[index]) {
+				switch(index) {
+					case 0: temp = new Marker(rail1x, railTop, 0);
+						markers.add(temp);
+						screenCanvas.addDynamicDrawable(temp);
+						break;
+					case 1: temp = new Marker(rail2x, railTop, 1);
+						markers.add(temp);
+						screenCanvas.addDynamicDrawable(temp);
+						break;
+					case 2: temp = new Marker(rail3x, railTop, 2);
+						markers.add(temp);
+						screenCanvas.addDynamicDrawable(temp);
+						break;
+					case 3: temp = new Marker(rail4x, railTop, 3);
+						markers.add(temp);
+						screenCanvas.addDynamicDrawable(temp);
+						break;
+				}
+			}
+		}
+
 	}
 
 	@Override
@@ -93,8 +122,8 @@ public class GameScreenController extends ScreenController {
 		screenCanvas = new Canvas();
 		screenCanvas.setBackground(screenBackgroundPath);
 		setupRails();
-		setupDemoMarkers();
 		setupHitBar();
+		
 		return screenCanvas;
 	}
 
@@ -215,6 +244,7 @@ public class GameScreenController extends ScreenController {
 	}
 	
 	private void playGameSong(int selection) {
+		System.out.println("play game song");
 		gameSongPlayer = new SoundPlayer(SONG_OPTIONS[selection]);
 	}
 

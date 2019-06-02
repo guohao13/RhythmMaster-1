@@ -36,6 +36,7 @@ public class Song {
 			try {
 				fileScanner = new Scanner(musicFile);
 			} catch (FileNotFoundException e) {
+				System.out.println("Song - file not found");
 				e.printStackTrace();
 			}
 			
