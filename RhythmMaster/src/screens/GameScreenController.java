@@ -50,11 +50,9 @@ public class GameScreenController extends ScreenController {
 		screenMusicPath = "";
 		screenBackgroundPath = "../Images/testOtherBackground.jpg";
 		screenTimer = new Timer();
-		setupCanvas();
-		setupRails();
-		setupDemoMarkers();
-		setupSongAndMissedNoteObs();
 		setupDisplayAndMusic();
+		setupKeys();
+		setupSongAndMissedNoteObs();
 		playGameSong(ApplicationManager.SELECTION);
 		setupWinLossTimer();
 	}
@@ -94,35 +92,13 @@ public class GameScreenController extends ScreenController {
 	public Canvas setupCanvas() {
 		screenCanvas = new Canvas();
 		screenCanvas.setBackground(screenBackgroundPath);
-		setupButtons();
+		setupRails();
+		setupDemoMarkers();
 		setupHitBar();
-		setupKeys();
 		return screenCanvas;
 	}
 
-	private void setupButtons() {
-//		JButton button = new JButton(new ImageIcon(Main.class.getResource("../Images/testButton.png")));
-//		button.setBounds(400, 500, 200, 100);
-//		button.setContentAreaFilled(false);
-//		button.setBorderPainted(false);
-//
-//		button.addActionListener(new ActionListener() {
-//			public void actionPerformed(ActionEvent event) {
-//				requestScreenChangeTo(Screen.MAIN_MENU);
-//			}
-//		});
-//
-//		screenCanvas.addButton(button);
-	}
-
-	private void setupRails() {
-		button.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent event) {
-				gameSongPlayer.stopClip();
-				requestScreenChangeTo(Screen.MAIN_MENU);
-			}
-		});		
-
+	private void setupRails() {	
 		System.out.println("setting up rails!" + screenCenterX + " ");
 		DrawableRectangle rail1 = new DrawableRectangle(screenCenterX - railSpacing * 3 / 2 - railWidth / 2,
 				60, railWidth, railHeight, Color.RED);
@@ -149,8 +125,6 @@ public class GameScreenController extends ScreenController {
 		hitBar.setFilled(true);
 		screenCanvas.addStaticDrawable(hitBar);
 	}
-	
-	
 	
 	public void changeHitBarColor(Color c) {
 		hitBar.setColor(c);
@@ -281,7 +255,4 @@ public class GameScreenController extends ScreenController {
 		currentSong = new Song(ApplicationManager.SELECTION);
 		missedNoteObs = new MissedNoteObserver(this);
 	}
-	
-	
-
 }

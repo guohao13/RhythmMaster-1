@@ -26,13 +26,13 @@ public class SongMenuScreenController extends ScreenController {
 	private void setupButtons() {
 		ImageIcon songsIcon = new ImageIcon(Main.class.getResource("../Images/SONGS_head.png"));
 		JButton songsButton = new JButton(songsIcon);
-		songsButton.setBounds(1280 / 2 - songsIcon.getIconWidth() / 2, 720 / 5 - songsIcon.getIconHeight() / 2,
-				songsIcon.getIconWidth(), songsIcon.getIconHeight());
+		songsButton.setBounds(1280 / 2 - songsIcon.getIconWidth() / 2, 720 / 5 - songsIcon.getIconHeight() / 2, songsIcon.getIconWidth(), songsIcon.getIconHeight());
 		songsButton.setContentAreaFilled(false);
 		songsButton.setBorderPainted(false);
 
 		songsButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
+				requestScreenChangeTo(Screen.SONG_MENU);
 			}
 		});
 
@@ -40,13 +40,13 @@ public class SongMenuScreenController extends ScreenController {
 		
 		ImageIcon badAppleIcon = new ImageIcon(Main.class.getResource("../Images/badapple.png"));
 		JButton badAppleButton = new JButton(badAppleIcon);
-		badAppleButton.setBounds(1280 / 3 - badAppleIcon.getIconWidth() / 2, 720 *3/ 5 - badAppleIcon.getIconHeight() / 2,
-				badAppleIcon.getIconWidth(), badAppleIcon.getIconHeight());
+		badAppleButton.setBounds(1280 / 3 - badAppleIcon.getIconWidth() / 2, 720 *3/ 5 - badAppleIcon.getIconHeight() / 2, badAppleIcon.getIconWidth(), badAppleIcon.getIconHeight());
 		badAppleButton.setContentAreaFilled(false);
 		badAppleButton.setBorderPainted(false);
 
 		badAppleButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
+				ApplicationManager.SELECTION = 1;
 				requestScreenChangeTo(Screen.GAME);
 			}
 		});
@@ -62,18 +62,14 @@ public class SongMenuScreenController extends ScreenController {
 
 		butterflyButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
+				ApplicationManager.SELECTION = 0;
 				requestScreenChangeTo(Screen.GAME);
 			}
 		});
 
 		screenCanvas.addButton(butterflyButton);
-				ApplicationManager.SELECTION = 0;
-				requestScreenChangeTo(Screen.SETTINGS);
-			}
-		});
-		screenCanvas.add(button);
 		
-		button = new JButton(new ImageIcon(Main.class.getResource("../Images/testButton.png")));
+		JButton	button = new JButton(new ImageIcon(Main.class.getResource("../Images/testButton.png")));
 		button.setBounds(200,400,200,100);
 		button.setContentAreaFilled(false);
 		button.setBorderPainted(false);
