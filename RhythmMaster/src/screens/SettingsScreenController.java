@@ -39,7 +39,7 @@ public class SettingsScreenController extends ScreenController {
 	
 	private void setupDifficultyBar() {
 		difficultyBar.setFilled(true);
-		screenCanvas.addDynamicDrawable(difficultyBar);
+		screenCanvas.addStaticDrawable(difficultyBar);
 		screenCanvas.addMouseListener(new MouseListener() {
 
 			@Override
