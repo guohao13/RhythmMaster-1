@@ -23,7 +23,7 @@ public class SoundPlayer {
 	
 	public SoundPlayer(String path) {
 		audioIn = null;
-		currClip = null;		
+		currClip = null;
 		playClip(path);
 	}
 	

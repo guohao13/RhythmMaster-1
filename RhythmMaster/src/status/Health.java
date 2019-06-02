@@ -5,7 +5,7 @@ import java.util.ArrayDeque;
 public class Health {
 	
 	private static final int MOVING_WINDOW_SIZE = 40;
-	private static final int WINDOW_SEED_VALUE = 25;
+	private static final int WINDOW_SEED_VALUE = 40;
 	
 	public ArrayDeque<Boolean> hitHistory;
 	public int sumMovingWindow;		// used to avoid processing hitHistory every tick
@@ -16,7 +16,7 @@ public class Health {
 		for(int a = 0; a < WINDOW_SEED_VALUE; a++) 
 			hitHistory.add(true);
 		
-		sumMovingWindow = 0;
+		sumMovingWindow = 40;
 	}
 	
 	public void updateHistory(boolean b) {

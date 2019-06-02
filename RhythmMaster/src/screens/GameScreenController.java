@@ -12,6 +12,7 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.TimeUnit;
 
 import javax.swing.AbstractAction;
 import javax.swing.ActionMap;
@@ -29,7 +30,7 @@ public class GameScreenController extends ScreenController {
 	int globalYOffset = -20;
 	int screenCenterX = 1280 / 2, screenCenterY =  680/ 2, railSpacing = 150, railWidth = 10, railHeight = 600, hitBarWidth = 700, hitBarHeight = 50;
 	int railTop = 60, rail1x = screenCenterX - railSpacing*3/2 - railWidth/2, rail2x = screenCenterX - railSpacing/2 - railWidth/2, rail3x = screenCenterX + railSpacing/2 - railWidth/2, rail4x = screenCenterX + railSpacing*3/2 - railWidth/2;
-	int dy = 1;
+	int dy = 2;
 	int markerIndex = 0;
 	DrawableRectangle hitBar;
 	List<Marker> markers = new ArrayList<Marker>();
@@ -41,10 +42,12 @@ public class GameScreenController extends ScreenController {
 	Song currentSong;
 	MissedNoteObserver missedNoteObs;
 	static final float MINIMUM_HP = 0f;
-	static final String[] SONG_OPTIONS = {	"../Sounds/Butterfly.wav",
+	static final String[] SONG_OPTIONS = {
+											"../Sounds/Butterfly.wav",
 											"../Sounds/BadApple.wav" };
 	static final int TIME_OFFSET = 3000000; // 5 seconds for marker to reach hitbar
 											// TODO: calc offset using y_velocity of marker	
+	static int MARKER_SPAWN_RATE;
 	
 	public GameScreenController() {
 		screenType = Screen.GAME;
@@ -62,7 +65,7 @@ public class GameScreenController extends ScreenController {
 	private void setupMarkerTimer() {
 		markerIndex = 0;
 		Timer t = new Timer();
-		TimerTask marker = new TimerTask() {
+		TimerTask markerSpawn = new TimerTask() {
 			@Override
 			public void run() {
 				spawnMarkers();
@@ -84,7 +87,7 @@ public class GameScreenController extends ScreenController {
 				screenCanvas.repaint();
 			}
 		};
-		t.scheduleAtFixedRate(marker, 0, 500);
+		t.scheduleAtFixedRate(markerSpawn, 0, MARKER_SPAWN_RATE);
 		t.scheduleAtFixedRate(markerPos, 0, 10);
 	}
 	
@@ -235,12 +238,11 @@ public class GameScreenController extends ScreenController {
 	}
 	
 	private int timeToBeat(int clipTime) {
-		System.out.println(clipTime);
-		return ((int)Math.floorDiv((long)clipTime, (60000000 / 60))); // TODO: should multiply by BPM, also this is mils should be micros
+		return ((int)Math.floorDiv((long)clipTime, (60000000 / currentSong.getBpm()))); // TODO: should multiply by BPM, also this is mils should be micros
 	}
 	
 	private int beatToTime(int beatIndex) {
-		return beatIndex * 60000000 / 60;
+		return beatIndex * 60000000 / currentSong.getBpm();
 	}
 	
 	private void playGameSong(int selection) {
@@ -279,7 +281,7 @@ public class GameScreenController extends ScreenController {
 			}
 		};
 		Timer t = new Timer();
-		t.scheduleAtFixedRate(beat, 0, 1000);
+		t.scheduleAtFixedRate(beat, 0, MARKER_SPAWN_RATE);
 	}
 	
 	private void handleLoss() {
@@ -299,6 +301,7 @@ public class GameScreenController extends ScreenController {
 	
 	private void setupSongAndMissedNoteObs() {
 		currentSong = new Song(ApplicationManager.SELECTION);
+		MARKER_SPAWN_RATE = 60000 / currentSong.getBpm();
 		missedNoteObs = new MissedNoteObserver(this);
 	}
 }
