@@ -213,6 +213,20 @@ public class SettingsScreenController extends ScreenController {
 	}
 
 	private void setupButtons() {
+		
+		ImageIcon applyIcon = new ImageIcon(Main.class.getResource("../Images/componentImages/Settings-Apply.png"));
+		JButton applyButton = new JButton(applyIcon);
+		applyButton.setBounds(1280 / 32, 720 *7/8 - applyIcon.getIconHeight() / 2,
+				applyIcon.getIconWidth(), applyIcon.getIconHeight());
+		applyButton.setContentAreaFilled(false);
+		applyButton.setBorderPainted(false);
+
+		applyButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent event) {
+				requestScreenChangeTo(Screen.MAIN_MENU);
+			}
+		});
+		screenCanvas.add(applyButton);
 
 		ImageIcon volumeIcon = new ImageIcon(Main.class.getResource("../Images/componentImages/Settings-Volume.png"));
 		JButton volumeButton = new JButton(volumeIcon);

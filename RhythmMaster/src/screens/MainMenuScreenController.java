@@ -26,17 +26,17 @@ public class MainMenuScreenController extends ScreenController {
 	}
 	
 	private void setupButtons() {
-		ImageIcon menuIcon = new ImageIcon(Main.class.getResource("../Images/MENU.png"));
-		JButton button = new JButton(menuIcon);
-		button.setBounds(1280/2 - menuIcon.getIconWidth()/2, 720/4 - menuIcon.getIconHeight()/2, menuIcon.getIconWidth(), menuIcon.getIconHeight());
-		button.setContentAreaFilled(false);
-		button.setBorderPainted(false);
+		ImageIcon backIcon = new ImageIcon(Main.class.getResource("../Images/MENU.png"));
+		JButton backButton = new JButton(backIcon);
+		backButton.setBounds(1280/2 - backIcon.getIconWidth()/2, 720/4 - backIcon.getIconHeight()/2, backIcon.getIconWidth(), backIcon.getIconHeight());
+		backButton.setContentAreaFilled(false);
+		backButton.setBorderPainted(false);
 		
 		//screenCanvas.addButton(button);
 		
 		ImageIcon startGameIcon = new ImageIcon(Main.class.getResource("../Images/componentImages/Menu-Select.png"));
 		JButton startGameButton = new JButton(startGameIcon);
-		startGameButton.setBounds(1280/32, 720*2/3 - startGameIcon.getIconHeight()/2, startGameIcon.getIconWidth(), startGameIcon.getIconHeight());
+		startGameButton.setBounds(1280/32, 720*5/8 - startGameIcon.getIconHeight()/2, startGameIcon.getIconWidth(), startGameIcon.getIconHeight());
 		startGameButton.setContentAreaFilled(false);
 		startGameButton.setBorderPainted(false);
 		
@@ -49,7 +49,7 @@ public class MainMenuScreenController extends ScreenController {
 		
 		ImageIcon settingsIcon = new ImageIcon(Main.class.getResource("../Images/componentImages/Menu-Settings.png"));
 		JButton settingsButton = new JButton(settingsIcon);
-		settingsButton.setBounds(1280/32, 720*5/6 - settingsIcon.getIconHeight()/2, settingsIcon.getIconWidth(), settingsIcon.getIconHeight());
+		settingsButton.setBounds(1280/32, 720*6/8 - settingsIcon.getIconHeight()/2, settingsIcon.getIconWidth(), settingsIcon.getIconHeight());
 		settingsButton.setContentAreaFilled(false);
 		settingsButton.setBorderPainted(false);
 		
@@ -67,8 +67,6 @@ public class MainMenuScreenController extends ScreenController {
 	
 	
 	private void setupText() {
-		ImageIcon menuIcon = new ImageIcon(Main.class.getResource("../Images/MENU.png"));
-		
-		
+		ImageIcon menuIcon = new ImageIcon(Main.class.getResource("../Images/MENU.png"));	
 	}
 }
