@@ -38,6 +38,7 @@ public class MissedNoteObserver implements Observer {
 		// exiting window, no keypress
 		else if( !((Marker) obj).isNearHitbar && railStatus[railIndex] == 1) {
 			parent.playerStatus.updateStatus(false);
+			System.out.println("   missed no press");
 			railStatus[railIndex] = 0;
 		}
 		// exiting window, yes keypress

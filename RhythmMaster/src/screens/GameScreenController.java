@@ -44,9 +44,7 @@ public class GameScreenController extends ScreenController {
 	static final float MINIMUM_HP = 0f;
 	static final String[] SONG_OPTIONS = {
 											"../Sounds/Butterfly.wav",
-											"../Sounds/BadApple.wav" };
-	static final int TIME_OFFSET = 3000000; // 5 seconds for marker to reach hitbar
-											// TODO: calc offset using y_velocity of marker	
+											"../Sounds/WiiMenu.wav" };
 	static int MARKER_SPAWN_RATE;
 	
 	public GameScreenController() {
@@ -76,12 +74,13 @@ public class GameScreenController extends ScreenController {
 		TimerTask markerPos = new TimerTask() {
 			@Override
 			public void run() {
-				// TODO: change to indexed for loop to accommodate deque
-				for(Marker m : markers) {
+				Marker m;
+				for(int x = 0; x < markers.size(); x++) {
+					m = markers.get(x);
 					m.setLocation(m.x, m.y + dy);
-					if (m.getY() > 610) {
-						// remove from markers
-						// remove from screenCanvas dynamicDrawables
+					if (m.getY() > 720) {
+						markers.remove(x);
+						screenCanvas.removeMarker();
 					}
 				}
 				screenCanvas.repaint();
@@ -217,14 +216,14 @@ public class GameScreenController extends ScreenController {
 			beatIndex = timeToBeat(clipTimeOfInput);
 			boolean[] beats = currentSong.getBitsAt(beatIndex);
 			int timeOfBeat = beatToTime(beatIndex);
-			int tolerance = 1000000; // TODO: get tolerance from settings screen
-			if(beats[railNumber] && Math.abs(clipTimeOfInput - timeOfBeat) <= tolerance) {
+			long tolerance = 1000000;
+			if(beats[railNumber] && Math.abs(clipTimeOfInput - timeOfBeat)/1000 <= tolerance) {
 				playerStatus.updateStatus(true);
 				System.out.println("  HIT ");
 			}
 			else {
 				playerStatus.updateStatus(false);
-				System.out.println("miss.... ");
+				System.out.println("miss press.... ");
 			}
 		}
 		System.out.println("Key for rail " + railNumber + " pressed at Beat " + beatIndex);	
@@ -238,11 +237,11 @@ public class GameScreenController extends ScreenController {
 	}
 	
 	private int timeToBeat(int clipTime) {
-		return ((int)Math.floorDiv((long)clipTime, (60000000 / currentSong.getBpm()))); // TODO: should multiply by BPM, also this is mils should be micros
+		return ((int)Math.floorDiv((long)clipTime, ( 1000 * currentSong.getBpm())));
 	}
 	
 	private int beatToTime(int beatIndex) {
-		return beatIndex * 60000000 / currentSong.getBpm();
+		return beatIndex * currentSong.getBpm() * 1000;
 	}
 	
 	private void playGameSong(int selection) {
@@ -277,7 +276,8 @@ public class GameScreenController extends ScreenController {
 			
 			@Override
 			public void run() {
-				System.out.println("Beat " + time++);
+				//System.out.println("Beat " + time++);
+				time++;
 			}
 		};
 		Timer t = new Timer();
@@ -301,7 +301,7 @@ public class GameScreenController extends ScreenController {
 	
 	private void setupSongAndMissedNoteObs() {
 		currentSong = new Song(ApplicationManager.SELECTION);
-		MARKER_SPAWN_RATE = 60000 / currentSong.getBpm();
+		MARKER_SPAWN_RATE = currentSong.getBpm();
 		missedNoteObs = new MissedNoteObserver(this);
 	}
 }

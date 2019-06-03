@@ -8,7 +8,7 @@ import java.util.Scanner;
 
 public class Song {
 	static final String[] SONG_PATHS = { 	"src/levels/butterfly.txt",	// TODO: change to relative paths
-											"src/levels/badapple.txt" };
+											"src/levels/wiimenu.txt" };
 	private static final int NUM_RAILS = 4;
 	
 	private String songName;
