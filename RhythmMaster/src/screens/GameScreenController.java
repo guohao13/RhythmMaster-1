@@ -50,7 +50,7 @@ public class GameScreenController extends ScreenController {
 	public GameScreenController() {
 		screenType = Screen.GAME;
 		screenMusicPath = "";
-		screenBackgroundPath = "../Images/testOtherBackground.jpg";
+		screenBackgroundPath = "../Images/backgroundImages/background-Game.png";
 		screenTimer = new Timer();
 		setupDisplayAndMusic();
 		setupKeys();
@@ -123,25 +123,46 @@ public class GameScreenController extends ScreenController {
 	public Canvas setupCanvas() {
 		screenCanvas = new Canvas();
 		screenCanvas.setBackground(screenBackgroundPath);
+		setupText();
 		setupRails();
 		setupHitBar();
 		
 		return screenCanvas;
 	}
 
+	private void setupText() {
+		// TODO Auto-generated method stub
+		ImageIcon healthIcon = new ImageIcon(Main.class.getResource("../Images/componentImages/Game-Health.png"));
+		JButton healthButton = new JButton(healthIcon);
+		healthButton.setBounds(ApplicationManager.SCREEN_WIDTH / 32, ApplicationManager.SCREEN_HEIGHT/8-healthIcon.getIconHeight()/2,
+				healthIcon.getIconWidth(), healthIcon.getIconHeight());
+		healthButton.setContentAreaFilled(false);
+		healthButton.setBorderPainted(false);
+		screenCanvas.addButton(healthButton);
+		
+		ImageIcon scoreIcon = new ImageIcon(Main.class.getResource("../Images/componentImages/Game-Score.png"));
+		JButton scoreButton = new JButton(scoreIcon);
+		scoreButton.setBounds(ApplicationManager.SCREEN_WIDTH / 32, ApplicationManager.SCREEN_HEIGHT*6/8-scoreIcon.getIconHeight()/2,
+				scoreIcon.getIconWidth(), scoreIcon.getIconHeight());
+		scoreButton.setContentAreaFilled(false);
+		scoreButton.setBorderPainted(false);
+		screenCanvas.addButton(scoreButton);
+	}
+
 	private void setupRails() {	
+		Color railColor = Color.BLACK;
 		System.out.println("setting up rails!" + screenCenterX + " ");
 		DrawableRectangle rail1 = new DrawableRectangle(screenCenterX - railSpacing * 3 / 2 - railWidth / 2,
-				60, railWidth, railHeight, Color.RED);
+				60, railWidth, railHeight, railColor);
 		rail1.setFilled(true);
 		DrawableRectangle rail2 = new DrawableRectangle(screenCenterX - railSpacing / 2 - railWidth / 2,
-				60, railWidth, railHeight, Color.RED);
+				60, railWidth, railHeight, railColor);
 		rail2.setFilled(true);
 		DrawableRectangle rail3 = new DrawableRectangle(screenCenterX + railSpacing / 2 - railWidth / 2,
-				60, railWidth, railHeight, Color.RED);
+				60, railWidth, railHeight, railColor);
 		rail3.setFilled(true);
 		DrawableRectangle rail4 = new DrawableRectangle(screenCenterX + railSpacing * 3 / 2 - railWidth / 2,
-				60, railWidth, railHeight, Color.RED);
+				60, railWidth, railHeight, railColor);
 		rail4.setFilled(true);
 
 		screenCanvas.addStaticDrawable(rail1);
@@ -152,7 +173,7 @@ public class GameScreenController extends ScreenController {
 
 	private void setupHitBar() {
 		hitBar = new DrawableRectangle(screenCenterX - this.hitBarWidth / 2, 560 - hitBarHeight/2, hitBarWidth,
-				hitBarHeight, Color.RED);
+				hitBarHeight, Color.BLACK);
 		hitBar.setFilled(true);
 		screenCanvas.addStaticDrawable(hitBar);
 	}
