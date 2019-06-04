@@ -28,18 +28,22 @@ import song.Song;
 import status.Status;
 
 public class GameScreenController extends ScreenController {
-	static int timescalled = 0;
 	int globalYOffset = -20;
-	int screenCenterX = 1280 / 2, screenCenterY = 680 / 2, railSpacing = 150, railWidth = 10, railHeight = 600,
+	int screenCenterX = 1280 / 2, 
+			screenCenterY = 680 / 2, 
+			railSpacing = 150, 
+			railWidth = 10, 
+			railHeight = 600,
 			hitBarWidth = 700, hitBarHeight = 50;
-	int railTop = 60, rail1x = screenCenterX - railSpacing * 3 / 2 - railWidth / 2,
+	int railTop = 60, 
+			rail1x = screenCenterX - railSpacing * 3 / 2 - railWidth / 2,
 			rail2x = screenCenterX - railSpacing / 2 - railWidth / 2,
 			rail3x = screenCenterX + railSpacing / 2 - railWidth / 2,
 			rail4x = screenCenterX + railSpacing * 3 / 2 - railWidth / 2;
 	int dy = 2;
 	int markerIndex = 0;
 	DrawableRectangle hitBar;
-	ArrayDeque<Marker> markers = new ArrayDeque<Marker>();
+	ArrayList<Marker> markers = new ArrayList<Marker>();
 	Timer screenTimer;
 	Timer updateTimer;
 	Timer winLossTimer;
@@ -223,22 +227,17 @@ public class GameScreenController extends ScreenController {
 		public void actionPerformed(ActionEvent e) {
 			int clipTimeOfInput = gameSongPlayer.getClipTime();
 			switch (e.getActionCommand()) {
-<<<<<<< HEAD
 				case "RAIL_ZERO":
 					hitDetectionObserver.registerKeypress(0);
-					//handleKeyPressed(0, clipTimeOfInput);
 					break;
 				case "RAIL_ONE":
 					hitDetectionObserver.registerKeypress(1);
-					//handleKeyPressed(1, clipTimeOfInput);
 					break;
 				case "RAIL_TWO":
 					hitDetectionObserver.registerKeypress(2);
-					//handleKeyPressed(2, clipTimeOfInput);
 					break;
 				case "RAIL_THREE":
 					hitDetectionObserver.registerKeypress(3);
-					//handleKeyPressed(3, clipTimeOfInput);
 					break;
 			}
 		}
@@ -247,7 +246,7 @@ public class GameScreenController extends ScreenController {
 	public void handleKeyPressed (int railNumber, int clipTimeOfInput) {
 		hitDetectionObserver.registerKeypress(railNumber);
 		flashHitBarColor();
-		System.out.println("Key for rail " + railNumber + " pressed at Beat " + beatIndex);
+		System.out.println("Key for rail " + railNumber + " pressed at Beat ");
 	}
 
 	public int getCurrentBeat() {

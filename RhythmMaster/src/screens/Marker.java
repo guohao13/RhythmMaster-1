@@ -11,9 +11,14 @@ public class Marker extends DrawableRectangle {
 	private static final int HITBAR_Y_COORD = 670;
 	private static final int OBSERVER_WINDOW_SIZE = 50;
 	private static final int Y_COORD_STEP_SIZE = 2;
+	private static final Color[] colors = { Color.CYAN,
+											Color.MAGENTA,
+											Color.YELLOW,
+											Color.GREEN 	};
+
 	private int railIndex;
-	private ObservableYCoord y_coord;
-	public boolean isInHitbar = false;
+	protected ObservableYCoord y_coord;
+	protected boolean isInHitbar = false;
 
 	Marker(int x, int y, int railIndex) {
 		super(x, y, SIDE_LENGTH, SIDE_LENGTH, colors[railIndex]);
@@ -22,12 +27,11 @@ public class Marker extends DrawableRectangle {
 		this.railIndex = railIndex;
 		this.y_coord = new ObservableYCoord(this);
 		this.y_coord.setValue(y);
-		this.id = currentID++;
 	}
 
 	@Override
 	public String toString() {
-		String s = "xpos = " + this.x + " ypos = " + this.y + " id = " + this.id;
+		String s = "xpos = " + this.x + " ypos = " + this.y;
 		return s;
 	}
 
