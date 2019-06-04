@@ -2,13 +2,16 @@ package song;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.net.URI;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+import screens.Main;
+
 public class Song {
-	static final String[] SONG_PATHS = { 	"src/levels/butterfly.txt",	// TODO: change to relative paths
-											"src/levels/wiimenu.txt" };
+	static final String[] SONG_PATHS = { 	"../levels/butterfly.txt",	// TODO: change to relative paths
+											"../levels/wiimenu.txt" };
 	private static final int NUM_RAILS = 4;
 	
 	private String songName;
@@ -26,7 +29,7 @@ public class Song {
 		File musicFile;
 		
 		try {
-			musicFile = new File(s);
+			musicFile = new File(Main.class.getResource(s).getPath());
 		} catch (NullPointerException e) {
 			musicFile = null;
 			e.printStackTrace();
