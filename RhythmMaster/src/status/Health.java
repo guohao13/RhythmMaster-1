@@ -16,7 +16,7 @@ public class Health {
 		for(int a = 0; a < WINDOW_SEED_VALUE; a++) 
 			hitHistory.add(true);
 		
-		sumMovingWindow = 40;
+		sumMovingWindow = WINDOW_SEED_VALUE;
 	}
 	
 	public void updateHistory(boolean b) {
@@ -25,7 +25,6 @@ public class Health {
 			if(val)		
 				sumMovingWindow--;
 		}
-		
 		hitHistory.addLast(new Boolean(b));
 		if(b)
 			sumMovingWindow++;
@@ -35,6 +34,6 @@ public class Health {
 		if(sumMovingWindow == 0)
 			return 0;
 		else
-			return (float)sumMovingWindow / hitHistory.size();
+			return ((float)sumMovingWindow / (float)hitHistory.size());
 	}
 }

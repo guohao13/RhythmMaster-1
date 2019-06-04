@@ -6,19 +6,20 @@ import java.util.Observable;
 
 public class Marker extends DrawableRectangle {
 	private static final int SIDE_LENGTH = 40;
+	private static final int HITBAR_TOP_Y = 560;
+	private static final int HITBAR_BOTTOM_Y = 610;
 	private static final int HITBAR_Y_COORD = 670;
-	private static final int OBSERVER_WINDOW_SIZE = 50;
-	private static final int Y_COORD_STEP_SIZE = 5;
-	private int railnumber;
-	private static Color blue = new Color(0x46, 0x9d, 0xff);
+  private static final int OBSERVER_WINDOW_SIZE = 50;
+  private static final int Y_COORD_STEP_SIZE = 2;
+  private static Color blue = new Color(0x46, 0x9d, 0xff);
 	private static Color red = new Color(0xeb, 0x69, 0x6e);
 	private static Color green = new Color(0x47,0xeb,0x94);
 	private static Color yellow = new Color(0xff,0xe4,0x80);
 	private static Color[] colors = {blue,red,green,yellow};
 
 	private int railIndex;
-	private ObservableYCoord y_coord;
-	public boolean isNearHitbar = false;
+	protected ObservableYCoord y_coord;
+	protected boolean isInHitbar = false;
 
 	Marker(int x, int y, int railIndex) {
 		super(x, y, SIDE_LENGTH, SIDE_LENGTH, colors[railIndex]);
@@ -30,20 +31,26 @@ public class Marker extends DrawableRectangle {
 	}
 
 	@Override
+	public String toString() {
+		String s = "xpos = " + this.x + " ypos = " + this.y;
+		return s;
+	}
+
+	@Override
 	public void draw(Graphics g) {
-		// TODO Auto-generated method stub
 		super.draw(g);
 	}
 
 	public int getRailIndex() {
 		return railIndex;
 	}
-
-	public ObservableYCoord getYCoord() {
-		return y_coord;
+	
+	public void setLocation(int x, int y) {
+		super.setLocation(x, y);
+		y_coord.setValue(y);
 	}
-
-	public void addObserver(MissedNoteObserver obs) {
+	
+	public void addObserver(HitDetectionObserver obs) {
 		y_coord.addObserver(obs);
 	}
 
@@ -51,30 +58,39 @@ public class Marker extends DrawableRectangle {
 
 		Marker parent;
 		private int y_coord;
-
+		private final int TOLERANCE_IN_PIXELS = (int) (ApplicationManager.TOLERANCE * (float)50);
+		
 		ObservableYCoord(Marker p) {
 			this.parent = p;
 		}
 
 		private void setValue(int val) {
 			y_coord = val;
-
-			// entering hitbar territory
-			if (Math.abs(HITBAR_Y_COORD - val) <= OBSERVER_WINDOW_SIZE) {
-				isNearHitbar = true;
-				notifyObservers(parent);
-			}
+			
 			// way before hitbar
-			else if (y_coord < HITBAR_Y_COORD - OBSERVER_WINDOW_SIZE - Y_COORD_STEP_SIZE)
-				isNearHitbar = false;
-			// way past hitbar
-			else if (y_coord > HITBAR_Y_COORD + OBSERVER_WINDOW_SIZE + Y_COORD_STEP_SIZE)
-				isNearHitbar = false;
+			if(y_coord + SIDE_LENGTH < HITBAR_TOP_Y - TOLERANCE_IN_PIXELS)
+				isInHitbar = false;
+			
+			// entering hitbar
+			else if(y_coord + SIDE_LENGTH < HITBAR_BOTTOM_Y + TOLERANCE_IN_PIXELS) {
+				if(!isInHitbar) {
+					isInHitbar = true;
+					notifyObservers(parent);
+				}
+			}
 			// exiting hitbar
-			else {
-				isNearHitbar = false;
-				notifyObservers(parent);
+			else if(y_coord > HITBAR_BOTTOM_Y + TOLERANCE_IN_PIXELS) {
+				if(isInHitbar) {
+					isInHitbar = false;
+					notifyObservers(parent);
+				}
 			}
 		}
+		
+		@Override
+	    public void notifyObservers(Object obj) {
+	        setChanged();
+	        super.notifyObservers(obj);
+	    }
 	}
 }
