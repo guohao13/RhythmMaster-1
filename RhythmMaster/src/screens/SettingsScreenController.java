@@ -55,9 +55,7 @@ public class SettingsScreenController extends ScreenController {
 		difficultyBacker.setFilled(true);
 		screenCanvas.addDynamicDrawable(difficultyBar);
 		screenCanvas.addStaticDrawable(difficultyBacker);
-		screenCanvas.addMouseListener(new MouseListener() {
-
-			@Override
+		screenCanvas.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {
 				int mouseX = e.getX();
 				int mouseY = e.getY();
@@ -69,29 +67,6 @@ public class SettingsScreenController extends ScreenController {
 					setTolerance();
 				}		
 			}
-
-			@Override
-			public void mouseEntered(MouseEvent e) {
-				// TODO Auto-generated method stub
-
-			}
-
-			@Override
-			public void mouseExited(MouseEvent e) {
-				// TODO Auto-generated method stub
-
-			}
-
-			@Override
-			public void mousePressed(MouseEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			@Override
-			public void mouseReleased(MouseEvent e) {
-				// TODO Auto-generated method stub
-      }
 		});
 	
 		screenCanvas.addMouseMotionListener(new MouseMotionAdapter() {
@@ -116,6 +91,7 @@ public class SettingsScreenController extends ScreenController {
 		volumeBar.setFilled(true);
 		volumeBacker.setFilled(true);
 		screenCanvas.addDynamicDrawable(volumeBar);
+    screenCanvas.addStaticDrawable(volumeBacker);
 		screenCanvas.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {
 				int mouseX = e.getX();

@@ -17,8 +17,7 @@ public class Canvas extends JPanel {
 	private Image background;
 	private List<JButton> canvasButtons = new ArrayList<JButton>();
 	private ArrayList<Drawable>staticDrawables = new ArrayList<Drawable>();
-	private ArrayList<Drawable> dynamicDrawables = new ArrayList<Drawable>();
-	
+	private ArrayList<Drawable> dynamicDrawables = new ArrayList<Drawable>();	
 	
 	public Canvas() {
 		setLayout(null);
@@ -84,11 +83,15 @@ public class Canvas extends JPanel {
 	}
 	
 	public void removeMarker() {
-		Marker m;
-		for(int x = 0; x < dynamicDrawables.size(); x++) {
-			m = (Marker) dynamicDrawables.get(x);
-			if(m.y > 720)
-				dynamicDrawables.remove(x);
+		
+		for(int i = 0; i < dynamicDrawables.size(); i++) {
+			Drawable d = dynamicDrawables.pop();
+			if (d instanceof Marker) {
+				if (((Marker) d).y <= 720){
+					dynamicDrawables.push(d);
+					
+				}
+			}
 		}
-	}
+	}	
 }

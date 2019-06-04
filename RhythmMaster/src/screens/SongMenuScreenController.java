@@ -38,7 +38,7 @@ public class SongMenuScreenController extends ScreenController {
 		});
 
 		screenCanvas.addButton(songsButton);
-
+    
 		ImageIcon wiiThemeIcon = new ImageIcon(Main.class.getResource("../Images/componentImages/Song-Wii.png"));
 		JButton wiiThemeButton = new JButton(wiiThemeIcon);
 		wiiThemeButton.setBounds(1280 / 32, 720 * 5/8 - wiiThemeIcon.getIconHeight() / 2, wiiThemeIcon.getIconWidth(),
