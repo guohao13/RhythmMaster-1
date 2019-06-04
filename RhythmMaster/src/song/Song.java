@@ -13,7 +13,7 @@ public class Song {
 	
 	private String songName;
 	private Scanner fileScanner;
-	private int bpm = 0;
+	private int msPerBeat = 0;
 	private int lengthInTicks;
 	private BeatMap beatMap;
 	private ArrayList<ArrayDeque<Integer>> timeMap;
@@ -41,7 +41,7 @@ public class Song {
 			}
 			
 			songName = fileScanner.nextLine();
-			bpm = Integer.parseInt(fileScanner.nextLine());
+			msPerBeat = Integer.parseInt(fileScanner.nextLine());
 			lengthInTicks = Integer.parseInt(fileScanner.nextLine());
 					
 			boolean[][] railData = new boolean[NUM_RAILS][lengthInTicks];
@@ -64,8 +64,8 @@ public class Song {
 		return beatMap.getRailBitsAt(index);
 	}
 
-	public int getBpm() {
-		return bpm;
+	public int getMSPerBeat() {
+		return msPerBeat;
 	}
 	
 	public ArrayList<ArrayDeque<Integer>> getTimeMap() {
@@ -74,7 +74,7 @@ public class Song {
 	
 	public void print() {
 		System.out.println("Song name: " + this.songName);
-		System.out.println("BPM: " + this.bpm);
+		System.out.println("ms/beat: " + this.msPerBeat);
 		beatMap.print();
 	}
 

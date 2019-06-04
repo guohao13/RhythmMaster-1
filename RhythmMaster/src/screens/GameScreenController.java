@@ -6,6 +6,7 @@ import java.awt.event.ActionListener;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Observer;
 import java.util.Random;
 import java.awt.event.KeyEvent;
 import java.util.ArrayDeque;
@@ -40,8 +41,8 @@ public class GameScreenController extends ScreenController {
 	Status playerStatus;
 	SoundPlayer gameSongPlayer;
 	Song currentSong;
-	MissedNoteObserver missedNoteObs;
-	static final float MINIMUM_HP = 0f;
+	HitDetectionObserver hitDetectionObserver;
+	static final float MINIMUM_HP = 0.5f;
 	static final String[] SONG_OPTIONS = {
 											"../Sounds/Butterfly.wav",
 											"../Sounds/WiiMenu.wav" };
@@ -62,7 +63,7 @@ public class GameScreenController extends ScreenController {
 	
 	private void setupMarkerTimer() {
 		markerIndex = 0;
-		Timer t = new Timer();
+		
 		TimerTask markerSpawn = new TimerTask() {
 			@Override
 			public void run() {
@@ -86,8 +87,8 @@ public class GameScreenController extends ScreenController {
 				screenCanvas.repaint();
 			}
 		};
-		t.scheduleAtFixedRate(markerSpawn, 0, MARKER_SPAWN_RATE);
-		t.scheduleAtFixedRate(markerPos, 0, 10);
+		screenTimer.scheduleAtFixedRate(markerSpawn, 0, MARKER_SPAWN_RATE);
+		screenTimer.scheduleAtFixedRate(markerPos, 0, 10);
 	}
 	
 	private void spawnMarkers() {
@@ -100,23 +101,26 @@ public class GameScreenController extends ScreenController {
 					case 0: temp = new Marker(rail1x, railTop, 0);
 						markers.add(temp);
 						screenCanvas.addDynamicDrawable(temp);
+						temp.addObserver(hitDetectionObserver);
 						break;
 					case 1: temp = new Marker(rail2x, railTop, 1);
 						markers.add(temp);
 						screenCanvas.addDynamicDrawable(temp);
+						temp.addObserver(hitDetectionObserver);
 						break;
 					case 2: temp = new Marker(rail3x, railTop, 2);
 						markers.add(temp);
 						screenCanvas.addDynamicDrawable(temp);
+						temp.addObserver(hitDetectionObserver);
 						break;
 					case 3: temp = new Marker(rail4x, railTop, 3);
 						markers.add(temp);
 						screenCanvas.addDynamicDrawable(temp);
+						temp.addObserver(hitDetectionObserver);
 						break;
 				}
 			}
 		}
-
 	}
 
 	@Override
@@ -193,22 +197,27 @@ public class GameScreenController extends ScreenController {
 			int clipTimeOfInput = gameSongPlayer.getClipTime();
 			switch (e.getActionCommand()) {
 				case "RAIL_ZERO":
-					handleKeyPressed(0, clipTimeOfInput);
+					hitDetectionObserver.registerKeypress(0);
+					//handleKeyPressed(0, clipTimeOfInput);
 					break;
 				case "RAIL_ONE":
-					handleKeyPressed(1, clipTimeOfInput);
+					hitDetectionObserver.registerKeypress(1);
+					//handleKeyPressed(1, clipTimeOfInput);
 					break;
 				case "RAIL_TWO":
-					handleKeyPressed(2, clipTimeOfInput);
+					hitDetectionObserver.registerKeypress(2);
+					//handleKeyPressed(2, clipTimeOfInput);
 					break;
 				case "RAIL_THREE":
-					handleKeyPressed(3, clipTimeOfInput);
+					hitDetectionObserver.registerKeypress(3);
+					//handleKeyPressed(3, clipTimeOfInput);
 					break;
 			}
 		}
 	}
 	
 	public void handleKeyPressed (int railNumber, int clipTimeOfInput) {
+		/*
 		int beatIndex = -1;
 		if(clipTimeOfInput < 0) 
 			playerStatus.updateStatus(false);	// key input before song clip has started playing
@@ -227,6 +236,18 @@ public class GameScreenController extends ScreenController {
 			}
 		}
 		System.out.println("Key for rail " + railNumber + " pressed at Beat " + beatIndex);	
+		
+		if(missedNoteObs.registerKeypress(railNumber)) {
+			System.out.println("HIT on rail " + railNumber);
+			playerStatus.updateStatus(true);
+			
+		}
+		else {
+			System.out.println("MISS on rail " + railNumber);
+			playerStatus.updateStatus(false);
+		}
+		*/
+		hitDetectionObserver.registerKeypress(railNumber);
 	}
 	
 	public int getCurrentBeat() {
@@ -237,11 +258,11 @@ public class GameScreenController extends ScreenController {
 	}
 	
 	private int timeToBeat(int clipTime) {
-		return ((int)Math.floorDiv((long)clipTime, ( 1000 * currentSong.getBpm())));
+		return ((int)Math.floorDiv((long)clipTime, ( 1000 * currentSong.getMSPerBeat())));
 	}
 	
 	private int beatToTime(int beatIndex) {
-		return beatIndex * currentSong.getBpm() * 1000;
+		return beatIndex * currentSong.getMSPerBeat() * 1000;
 	}
 	
 	private void playGameSong(int selection) {
@@ -276,16 +297,18 @@ public class GameScreenController extends ScreenController {
 			
 			@Override
 			public void run() {
-				//System.out.println("Beat " + time++);
 				time++;
 			}
 		};
-		Timer t = new Timer();
-		t.scheduleAtFixedRate(beat, 0, MARKER_SPAWN_RATE);
+		screenTimer.scheduleAtFixedRate(beat, 0, MARKER_SPAWN_RATE);
 	}
 	
 	private void handleLoss() {
 		winLossTimer.cancel();
+		screenTimer.cancel();
+		for(Marker m : markers) {
+			m.y_coord.deleteObserver(hitDetectionObserver);
+		}
 		int timeSurvived = Math.floorDiv(gameSongPlayer.getClipTime(), 1000000);
 		gameSongPlayer.stopClip();
 		JOptionPane.showMessageDialog(screenCanvas, "You lost \nYour hit percent was too low \nBut you survived " + timeSurvived + " seconds!", "Sorry", JOptionPane.WARNING_MESSAGE);
@@ -301,7 +324,8 @@ public class GameScreenController extends ScreenController {
 	
 	private void setupSongAndMissedNoteObs() {
 		currentSong = new Song(ApplicationManager.SELECTION);
-		MARKER_SPAWN_RATE = currentSong.getBpm();
-		missedNoteObs = new MissedNoteObserver(this);
+		MARKER_SPAWN_RATE = currentSong.getMSPerBeat() / 10; // Math.round( (float)currentSong.getMSPerBeat() / (float)10) + 1;
+				//-Math.floorDiv(-currentSong.getMSPerBeat(), 10);//currentSong.getMSPerBeat() / 10;
+		hitDetectionObserver = new HitDetectionObserver(this);
 	}
 }
