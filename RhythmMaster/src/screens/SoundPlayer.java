@@ -1,6 +1,8 @@
 package screens;
 
 import java.io.IOException;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
@@ -23,9 +25,23 @@ public class SoundPlayer {
 	
 	public SoundPlayer(String path) {
 		audioIn = null;
-		currClip = null;		
+		currClip = null;
 		playClip(path);
 	}
+	
+	public SoundPlayer(String path, boolean delay) {
+		audioIn = null;
+		currClip = null;
+		Timer t = new Timer();
+		TimerTask delayPlay = new TimerTask() {
+			@Override
+			public void run() {
+				playClip(path, 0);
+			}
+		};
+		t.schedule(delayPlay, 2500);		
+	}
+	
 	
 	public void playClip(String path) {
 		playClip(path, 0);

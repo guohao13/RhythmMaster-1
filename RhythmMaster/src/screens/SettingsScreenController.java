@@ -3,9 +3,10 @@ package screens;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
+import java.awt.event.MouseMotionAdapter;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 
@@ -40,12 +41,12 @@ public class SettingsScreenController extends ScreenController {
 	}
 
 	private void setVolume() {
-		double volume = volumeBar.getWidth() / BAR_WIDTH;
-
+		ApplicationManager.VOLUME = (float)volumeBar.getWidth()/BAR_WIDTH;
 	}
-
-	private void setDifficulty() {
-		double difficulty = difficultyBar.getWidth() / BAR_WIDTH;
+  
+	private void setTolerance() {
+		ApplicationManager.TOLERANCE = 1; 
+    // TODO: figure out what type this should be difficultyBar.getWidth()/BAR_WIDTH;
 	}
 
 	private void setupDifficultyBar() {
@@ -58,8 +59,15 @@ public class SettingsScreenController extends ScreenController {
 
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				// TODO Auto-generated method stub
-				update(e);
+				int mouseX = e.getX();
+				int mouseY = e.getY();
+				System.out.println("clicked! at " + mouseX + ", " + mouseY);
+				if (mouseY > difficultyBar.y && mouseY < difficultyBar.y + difficultyBar.height && mouseX > difficultyBar.x && mouseX < difficultyBar.x+300) {
+					int newWidth = (mouseX > difficultyBar.x && mouseX < difficultyBar.x + 300) ? mouseX - difficultyBar.x : 0;
+					difficultyBar.setSize(newWidth, difficultyBar.height);
+					screenCanvas.repaint();
+					setTolerance();
+				}		
 			}
 
 			@Override
@@ -77,45 +85,17 @@ public class SettingsScreenController extends ScreenController {
 			@Override
 			public void mousePressed(MouseEvent e) {
 				// TODO Auto-generated method stub
-				update(e);
+				
 			}
 
 			@Override
 			public void mouseReleased(MouseEvent e) {
 				// TODO Auto-generated method stub
-				update(e);
-			}
-
-			public void update(MouseEvent e) {
-				int mouseX = e.getX();
-				int mouseY = e.getY();
-				System.out.println("clicked! at " + mouseX + ", " + mouseY);
-				if (mouseY > difficultyBar.y && mouseY < difficultyBar.y + difficultyBar.height
-						&& mouseX > difficultyBar.x && mouseX < difficultyBar.x + 300) {
-					int newWidth = (mouseX > difficultyBar.x && mouseX < difficultyBar.x + 300)
-							? mouseX - difficultyBar.x
-							: 0;
-					difficultyBar.setSize(newWidth, difficultyBar.height);
-					screenCanvas.repaint();
-				}
-
-			}
-
+      }
 		});
-		screenCanvas.addMouseMotionListener(new MouseMotionListener() {
-
-			@Override
+	
+		screenCanvas.addMouseMotionListener(new MouseMotionAdapter() {
 			public void mouseDragged(MouseEvent e) {
-				// TODO Auto-generated method stub
-				update(e);
-			}
-
-			@Override
-			public void mouseMoved(MouseEvent e) {
-				// TODO Auto-generated method stub
-			}
-
-			public void update(MouseEvent e) {
 				int mouseX = e.getX();
 				int mouseY = e.getY();
 				System.out.println("clicked! at " + mouseX + ", " + mouseY);
@@ -126,52 +106,18 @@ public class SettingsScreenController extends ScreenController {
 							: 0;
 					difficultyBar.setSize(newWidth, difficultyBar.height);
 					screenCanvas.repaint();
-				}
-
-			}
-
+					setTolerance();
+				}				
+			} 
 		});
 	}
 
 	private void setupVolumeBar() {
-
 		volumeBar.setFilled(true);
 		volumeBacker.setFilled(true);
 		screenCanvas.addDynamicDrawable(volumeBar);
-		screenCanvas.addStaticDrawable(volumeBacker);
-		screenCanvas.addMouseListener(new MouseListener() {
-
-			@Override
+		screenCanvas.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {
-				// TODO Auto-generated method stub
-				update(e);
-			}
-
-			@Override
-			public void mouseEntered(MouseEvent e) {
-				// TODO Auto-generated method stub
-
-			}
-
-			@Override
-			public void mouseExited(MouseEvent e) {
-				// TODO Auto-generated method stub
-
-			}
-
-			@Override
-			public void mousePressed(MouseEvent e) {
-				// TODO Auto-generated method stub
-				update(e);
-			}
-
-			@Override
-			public void mouseReleased(MouseEvent e) {
-				// TODO Auto-generated method stub
-				update(e);
-			}
-
-			public void update(MouseEvent e) {
 				int mouseX = e.getX();
 				int mouseY = e.getY();
 				System.out.println("clicked! at " + mouseX + ", " + mouseY);
@@ -180,24 +126,13 @@ public class SettingsScreenController extends ScreenController {
 					int newWidth = (mouseX > volumeBar.x && mouseX < volumeBar.x + 300) ? mouseX - volumeBar.x : 0;
 					volumeBar.setSize(newWidth, volumeBar.height);
 					screenCanvas.repaint();
+					setVolume();
 				}
 			}
 
 		});
-		screenCanvas.addMouseMotionListener(new MouseMotionListener() {
-
-			@Override
+		screenCanvas.addMouseMotionListener(new MouseMotionAdapter() {
 			public void mouseDragged(MouseEvent e) {
-				// TODO Auto-generated method stub
-				update(e);
-			}
-
-			@Override
-			public void mouseMoved(MouseEvent e) {
-				// TODO Auto-generated method stub
-			}
-
-			public void update(MouseEvent e) {
 				int mouseX = e.getX();
 				int mouseY = e.getY();
 				System.out.println("clicked! at " + mouseX + ", " + mouseY);
@@ -206,14 +141,13 @@ public class SettingsScreenController extends ScreenController {
 					int newWidth = (mouseX > volumeBar.x && mouseX < volumeBar.x + 300) ? mouseX - volumeBar.x : 0;
 					volumeBar.setSize(newWidth, volumeBar.height);
 					screenCanvas.repaint();
+					setVolume();
 				}
-			}
-
+      }
 		});
 	}
 
 	private void setupButtons() {
-		
 		ImageIcon applyIcon = new ImageIcon(Main.class.getResource("../Images/componentImages/Settings-Apply.png"));
 		JButton applyButton = new JButton(applyIcon);
 		applyButton.setBounds(1280 / 32, 720 *7/8 - applyIcon.getIconHeight() / 2,
@@ -242,6 +176,5 @@ public class SettingsScreenController extends ScreenController {
 		dificultyButton.setContentAreaFilled(false);
 		dificultyButton.setBorderPainted(false);
 		screenCanvas.addButton(dificultyButton);
-
 	}
 }

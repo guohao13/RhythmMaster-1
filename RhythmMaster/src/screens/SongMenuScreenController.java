@@ -48,6 +48,7 @@ public class SongMenuScreenController extends ScreenController {
 
 		wiiThemeButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
+				ApplicationManager.SELECTION = 1;
 				requestScreenChangeTo(Screen.GAME);
 			}
 		});
@@ -63,30 +64,11 @@ public class SongMenuScreenController extends ScreenController {
 
 		butterflyButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
+				ApplicationManager.SELECTION = 0;
 				requestScreenChangeTo(Screen.GAME);
 			}
 		});
 
 		screenCanvas.addButton(butterflyButton);
-
-		// ApplicationManager.SELECTION = 0;
-		// requestScreenChangeTo(Screen.SETTINGS);
-		// }
-		// });
-		// screenCanvas.add(button);
-
-		// JButton button = new JButton(new
-		// ImageIcon(Main.class.getResource("../Images/testButton.png")));
-		// button.setBounds(200,400,200,100);
-		// button.setContentAreaFilled(false);
-		// button.setBorderPainted(false);
-		//
-		// button.addActionListener(new ActionListener() {
-		// public void actionPerformed(ActionEvent event) {
-		// ApplicationManager.SELECTION = 1;
-		// requestScreenChangeTo(Screen.SETTINGS);
-		// }
-		// });
-		// screenCanvas.addButton(button);
 	}
 }

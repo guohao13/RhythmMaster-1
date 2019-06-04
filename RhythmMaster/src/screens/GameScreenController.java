@@ -6,12 +6,14 @@ import java.awt.event.ActionListener;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Observer;
 import java.util.Random;
 import java.awt.event.KeyEvent;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.TimeUnit;
 
 import javax.swing.AbstractAction;
 import javax.swing.ActionMap;
@@ -26,149 +28,121 @@ import song.Song;
 import status.Status;
 
 public class GameScreenController extends ScreenController {
-	static int timescalled = 0;
 	int globalYOffset = -20;
-	int screenCenterX = 1280 / 2, screenCenterY = 680 / 2, railSpacing = 150, railWidth = 10, railHeight = 600,
+	int screenCenterX = 1280 / 2, 
+			screenCenterY = 680 / 2, 
+			railSpacing = 150, 
+			railWidth = 10, 
+			railHeight = 600,
 			hitBarWidth = 700, hitBarHeight = 50;
-	int railTop = 60, rail1x = screenCenterX - railSpacing * 3 / 2 - railWidth / 2,
+	int railTop = 60, 
+			rail1x = screenCenterX - railSpacing * 3 / 2 - railWidth / 2,
 			rail2x = screenCenterX - railSpacing / 2 - railWidth / 2,
 			rail3x = screenCenterX + railSpacing / 2 - railWidth / 2,
 			rail4x = screenCenterX + railSpacing * 3 / 2 - railWidth / 2;
-	int dy = 5;
+	int dy = 2;
+	int markerIndex = 0;
 	DrawableRectangle hitBar;
-	ArrayDeque<Marker> markers = new ArrayDeque<Marker>();
+	ArrayList<Marker> markers = new ArrayList<Marker>();
 	Timer screenTimer;
 	Timer updateTimer;
 	Timer winLossTimer;
 	Status playerStatus;
 	SoundPlayer gameSongPlayer;
 	Song currentSong;
-	MissedNoteObserver missedNoteObs;
-
-	double period = 100, amplitude = 255;
-	int t = 0;
-
-	static final float MINIMUM_HP = 0f;
-	static final String[] SONG_OPTIONS = { "../Sounds/Butterfly.wav", "../Sounds/WiiMenu.wav" };
-	static final int TIME_OFFSET = 5000000; // 5 seconds for marker to reach hitbar
-											// TODO: calc offset using y_velocity of marker
-
+	HitDetectionObserver hitDetectionObserver;
+	static final float MINIMUM_HP = 0.5f;
+	static final String[] SONG_OPTIONS = {
+											"../Sounds/Butterfly.wav",
+											"../Sounds/WiiMenu.wav" };
+	static int MARKER_SPAWN_RATE;
+	
 	public GameScreenController() {
 		screenType = Screen.GAME;
 		screenMusicPath = "";
 		screenBackgroundPath = "../Images/testOtherBackground.jpg";
-
-		System.out.println("times called = " + (++timescalled));
-		screenCanvas = new Canvas();
-		screenCanvas.setBackground(new Color(0x96, 0x94, 0xAB));
-
-		setupCanvas();
-		setupSongAndMissedNoteObs();
+		screenTimer = new Timer();
 		setupDisplayAndMusic();
+		setupKeys();
+		setupSongAndMissedNoteObs();
 		playGameSong(ApplicationManager.SELECTION);
 		setupWinLossTimer();
-		setupScreenTimer();
-	}
-
-	private void addRandomMarkers() {
-		Random r = new Random();
-		if (r.nextInt(500) < 3) {
-			Marker m = new Marker(rail1x, railTop, 1);
-			screenCanvas.addDynamicDrawable(m);
-			markers.add(m);
-		}
-	}
-
-	private void setupScreenTimer() {
-		screenTimer = new Timer();
-		TimerTask tt = new TimerTask() {
-
-			@Override
-			public void run() {
-				advanceTime();
-			}
-
-		};
-		screenTimer.scheduleAtFixedRate(tt, 0, 16);
+		setupMarkerTimer();
 	}
 	
-	synchronized void updateMarkers() {
-		for (int i = 0; i < markers.size(); i++) {
-			if (markers.peekFirst().getCenterY() > 561) {
-				markers.pop();
-				System.out.println("pop!");
-			}
-			else {
-				markers.peekFirst().setLocation(markers.peekFirst().x, markers.peekFirst().y + dy);
-				markers.add(markers.pop());
-				System.out.println("rotate!");
-			}
-		}
+	private void setupMarkerTimer() {
+		markerIndex = 0;
 		
-		ArrayDeque<Marker> markerArray = screenCanvas.getDynamicList();
-		for (int j = 0; j < screenCanvas.getDynamicList().size(); j++){
-			if(markerArray.peekFirst().getCenterY() > 561) {
-				markerArray.pop();
+		TimerTask markerSpawn = new TimerTask() {
+			@Override
+			public void run() {
+				spawnMarkers();
+				markerIndex++;
 			}
-			else {
-				markerArray.peekFirst().setLocation(markers.peekFirst().x, markers.peekFirst().y + dy);
-				markers.add(markers.pop());
-			}
-		}
-	}
-	synchronized private void advanceTime() {
-		for (Marker m : markers) {
-			m.setLocation(m.x, m.y + dy);
-			// System.out.println(m);
-		}
+		};
 		
-		updateMarkers();
-		//int c1 = (int) ((Math.sin(Math.PI * 2 * t / period) + 1) * amplitude / 2);
-		//int c2 = (int) ((Math.cos(Math.PI * 2 * t / period) + 1) * amplitude / 2);
-		//System.out.println("c1 = " + c1 + " c2 = " + c2);
-//		t++;
-		//screenCanvas.setBackground(new Color(255, 255, c1));
-		addRandomMarkers();
-		screenCanvas.repaint();
+		TimerTask markerPos = new TimerTask() {
+			@Override
+			public void run() {
+				Marker m;
+				for(int x = 0; x < markers.size(); x++) {
+					m = markers.get(x);
+					m.setLocation(m.x, m.y + dy);
+					if (m.getY() > 720) {
+						markers.remove(x);
+						screenCanvas.removeMarker();
+					}
+				}
+				screenCanvas.repaint();
+			}
+		};
+		screenTimer.scheduleAtFixedRate(markerSpawn, 0, MARKER_SPAWN_RATE);
+		screenTimer.scheduleAtFixedRate(markerPos, 0, 10);
 	}
-
-	private void setupDemoMarkers() {
-
-		// System.out.println("markers size before = " + markers.size());
-		markers.add(new Marker(rail1x, railTop, 1));
-		markers.add(new Marker(rail2x, railTop, 2));
-
-		for (Marker m : markers) {
-			screenCanvas.addDynamicDrawable(m);
-			// System.out.println(m);
+	
+	private void spawnMarkers() {
+		boolean[] beats = currentSong.getBitsAt(markerIndex);
+		Marker temp;
+				
+		for(int index = 0; index < 4; index++) {
+			if(beats[index]) {
+				switch(index) {
+					case 0: temp = new Marker(rail1x, railTop, 0);
+						markers.add(temp);
+						screenCanvas.addDynamicDrawable(temp);
+						temp.addObserver(hitDetectionObserver);
+						break;
+					case 1: temp = new Marker(rail2x, railTop, 1);
+						markers.add(temp);
+						screenCanvas.addDynamicDrawable(temp);
+						temp.addObserver(hitDetectionObserver);
+						break;
+					case 2: temp = new Marker(rail3x, railTop, 2);
+						markers.add(temp);
+						screenCanvas.addDynamicDrawable(temp);
+						temp.addObserver(hitDetectionObserver);
+						break;
+					case 3: temp = new Marker(rail4x, railTop, 3);
+						markers.add(temp);
+						screenCanvas.addDynamicDrawable(temp);
+						temp.addObserver(hitDetectionObserver);
+						break;
+				}
+			}
 		}
-		// System.out.println("markers size after = " + markers.size());
 	}
 
 	@Override
 	public Canvas setupCanvas() {
-		setupButtons();
-		setupHitBar();
-		setupKeys();
+		screenCanvas = new Canvas();
+		screenCanvas.setBackground(screenBackgroundPath);
 		setupRails();
-		setupDemoMarkers();
+		setupHitBar();
+		
 		return screenCanvas;
 	}
 
-	private void setupButtons() {
-		JButton button = new JButton(new ImageIcon(Main.class.getResource("../Images/testButton.png")));
-		button.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent event) {
-				gameSongPlayer.stopClip();
-				requestScreenChangeTo(Screen.MAIN_MENU);
-			}
-		});
-
-		screenCanvas.addButton(button);
-	}
-
-	private void setupRails() {
-
+	private void setupRails() {	
 		System.out.println("setting up rails!" + screenCenterX + " ");
 		DrawableRectangle rail1 = new DrawableRectangle(screenCenterX - railSpacing * 3 / 2 - railWidth / 2, 60,
 				railWidth, railHeight, Color.RED);
@@ -195,7 +169,7 @@ public class GameScreenController extends ScreenController {
 		hitBar.setFilled(true);
 		screenCanvas.addStaticDrawable(hitBar);
 	}
-
+	
 	public void changeHitBarColor(Color c) {
 		hitBar.setColor(c);
 	}
@@ -253,37 +227,26 @@ public class GameScreenController extends ScreenController {
 		public void actionPerformed(ActionEvent e) {
 			int clipTimeOfInput = gameSongPlayer.getClipTime();
 			switch (e.getActionCommand()) {
-			case "RAIL_ZERO":
-				handleKeyPressed(0, clipTimeOfInput);
-				break;
-			case "RAIL_ONE":
-				handleKeyPressed(1, clipTimeOfInput);
-				break;
-			case "RAIL_TWO":
-				handleKeyPressed(2, clipTimeOfInput);
-				break;
-			case "RAIL_THREE":
-				handleKeyPressed(3, clipTimeOfInput);
-				break;
+				case "RAIL_ZERO":
+					hitDetectionObserver.registerKeypress(0);
+					break;
+				case "RAIL_ONE":
+					hitDetectionObserver.registerKeypress(1);
+					break;
+				case "RAIL_TWO":
+					hitDetectionObserver.registerKeypress(2);
+					break;
+				case "RAIL_THREE":
+					hitDetectionObserver.registerKeypress(3);
+					break;
 			}
 		}
 	}
-
-	public void handleKeyPressed(int railNumber, int clipTimeOfInput) {
-		int beatIndex = -1;
-		if (clipTimeOfInput < 0)
-			playerStatus.updateStatus(false); // key input before song clip has started playing
-		else {
-			beatIndex = timeToBeat(clipTimeOfInput);
-			int timeOfBeat = beatToTime(beatIndex);
-			int tolerance = 1000000; // TODO: get tolerance from settings screen
-			if (Math.abs(clipTimeOfInput - timeOfBeat) <= tolerance)
-				playerStatus.updateStatus(true);
-			else
-				playerStatus.updateStatus(false);
-		}
+	
+	public void handleKeyPressed (int railNumber, int clipTimeOfInput) {
+		hitDetectionObserver.registerKeypress(railNumber);
 		flashHitBarColor();
-		System.out.println("Key for rail " + railNumber + " pressed at Beat " + beatIndex);
+		System.out.println("Key for rail " + railNumber + " pressed at Beat ");
 	}
 
 	public int getCurrentBeat() {
@@ -294,16 +257,15 @@ public class GameScreenController extends ScreenController {
 	}
 
 	private int timeToBeat(int clipTime) {
-		System.out.println(clipTime);
-		return ((int) Math.floorDiv((long) clipTime, (60000000 / 120))); // TODO: should multiply by BPM, also this is
-																			// mils should be micros
+		return ((int)Math.floorDiv((long)clipTime, ( 1000 * currentSong.getMSPerBeat())));
 	}
 
 	private int beatToTime(int beatIndex) {
-		return beatIndex * 60000000;
+		return beatIndex * currentSong.getMSPerBeat() * 1000;
 	}
 
 	private void playGameSong(int selection) {
+		System.out.println("play game song");
 		gameSongPlayer = new SoundPlayer(SONG_OPTIONS[selection]);
 	}
 
@@ -328,10 +290,24 @@ public class GameScreenController extends ScreenController {
 		winLossTimer = new Timer("winLossTimer");
 		winLossTimer.scheduleAtFixedRate(checkHPLoss, 0, 100);
 		winLossTimer.schedule(endOfSongWin, Math.floorDiv(gameSongPlayer.getClipLength(), 1000) + 1);
+		
+		TimerTask beat = new TimerTask() {
+			int time = 0;
+			
+			@Override
+			public void run() {
+				time++;
+			}
+		};
+		screenTimer.scheduleAtFixedRate(beat, 0, MARKER_SPAWN_RATE);
 	}
 
 	private void handleLoss() {
 		winLossTimer.cancel();
+		screenTimer.cancel();
+		for(Marker m : markers) {
+			m.y_coord.deleteObserver(hitDetectionObserver);
+		}
 		int timeSurvived = Math.floorDiv(gameSongPlayer.getClipTime(), 1000000);
 		gameSongPlayer.stopClip();
 		JOptionPane.showMessageDialog(screenCanvas,
@@ -350,7 +326,8 @@ public class GameScreenController extends ScreenController {
 
 	private void setupSongAndMissedNoteObs() {
 		currentSong = new Song(ApplicationManager.SELECTION);
-		missedNoteObs = new MissedNoteObserver(this);
+		MARKER_SPAWN_RATE = currentSong.getMSPerBeat() / 10; // Math.round( (float)currentSong.getMSPerBeat() / (float)10) + 1;
+				//-Math.floorDiv(-currentSong.getMSPerBeat(), 10);//currentSong.getMSPerBeat() / 10;
+		hitDetectionObserver = new HitDetectionObserver(this);
 	}
-
 }

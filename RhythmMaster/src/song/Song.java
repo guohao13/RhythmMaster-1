@@ -8,12 +8,12 @@ import java.util.Scanner;
 
 public class Song {
 	static final String[] SONG_PATHS = { 	"RhythmMaster/src/levels/butterfly.txt",	// TODO: change to relative paths
-											"RhythmMaster/src/levels/badapple.txt" };
+											"RhythmMaster/ssrc/levels/wiimenu.txt" };
 	private static final int NUM_RAILS = 4;
 	
 	private String songName;
 	private Scanner fileScanner;
-	private int bpm = 0;
+	private int msPerBeat = 0;
 	private int lengthInTicks;
 	private BeatMap beatMap;
 	private ArrayList<ArrayDeque<Integer>> timeMap;
@@ -36,11 +36,12 @@ public class Song {
 			try {
 				fileScanner = new Scanner(musicFile);
 			} catch (FileNotFoundException e) {
+				System.out.println("Song - file not found");
 				e.printStackTrace();
 			}
 			
 			songName = fileScanner.nextLine();
-			bpm = Integer.parseInt(fileScanner.nextLine());
+			msPerBeat = Integer.parseInt(fileScanner.nextLine());
 			lengthInTicks = Integer.parseInt(fileScanner.nextLine());
 					
 			boolean[][] railData = new boolean[NUM_RAILS][lengthInTicks];
@@ -63,8 +64,8 @@ public class Song {
 		return beatMap.getRailBitsAt(index);
 	}
 
-	public int getBpm() {
-		return bpm;
+	public int getMSPerBeat() {
+		return msPerBeat;
 	}
 	
 	public ArrayList<ArrayDeque<Integer>> getTimeMap() {
@@ -73,7 +74,7 @@ public class Song {
 	
 	public void print() {
 		System.out.println("Song name: " + this.songName);
-		System.out.println("BPM: " + this.bpm);
+		System.out.println("ms/beat: " + this.msPerBeat);
 		beatMap.print();
 	}
 

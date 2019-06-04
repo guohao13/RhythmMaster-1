@@ -17,7 +17,7 @@ public class Canvas extends JPanel {
 	private Image background;
 	private List<JButton> canvasButtons = new ArrayList<JButton>();
 	private ArrayList<Drawable>staticDrawables = new ArrayList<Drawable>();
-	private ArrayDeque<Drawable> dynamicDrawables = new ArrayDeque<Drawable>();
+	private ArrayList<Drawable> dynamicDrawables = new ArrayList<Drawable>();
 	
 	
 	public Canvas() {
@@ -56,14 +56,8 @@ public class Canvas extends JPanel {
 		return c;
 	}
 	
-	public ArrayDeque<Marker> getDynamicList(){
-		ArrayDeque<Marker> m = new ArrayDeque<Marker>();
-		for(Drawable d : dynamicDrawables) {
-			if (d instanceof Marker) {
-				m.add((Marker)d);
-			}
-		}
-		return m;
+	public ArrayList<Drawable> getDynamicList(){
+		return dynamicDrawables;
 	}
 	public ArrayList<Drawable> getStaticList(){
 		return staticDrawables;
@@ -80,6 +74,7 @@ public class Canvas extends JPanel {
 		repaint();
 		return d;
 	}
+	
 	public void removeButtonListeners() {
 		for (JButton button : canvasButtons) {
 			for (ActionListener listener : button.getActionListeners()) {
@@ -88,5 +83,12 @@ public class Canvas extends JPanel {
 		}
 	}
 	
-	
+	public void removeMarker() {
+		Marker m;
+		for(int x = 0; x < dynamicDrawables.size(); x++) {
+			m = (Marker) dynamicDrawables.get(x);
+			if(m.y > 720)
+				dynamicDrawables.remove(x);
+		}
+	}
 }
