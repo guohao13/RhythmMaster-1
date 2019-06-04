@@ -1,8 +1,13 @@
 package screens;
 
 import java.awt.Color;
+import java.awt.Font;
+import java.awt.FontFormatException;
+import java.awt.GraphicsEnvironment;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
+import java.io.IOException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,7 +15,6 @@ import java.util.Observer;
 import java.util.Random;
 import java.awt.event.KeyEvent;
 import java.util.ArrayDeque;
-import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
@@ -21,6 +25,7 @@ import javax.swing.ImageIcon;
 import javax.swing.InputMap;
 import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 
@@ -47,6 +52,8 @@ public class GameScreenController extends ScreenController {
 	Timer screenTimer;
 	Timer updateTimer;
 	Timer winLossTimer;
+	JLabel hpLabel;
+	JLabel scoreLabel;
 	Status playerStatus;
 	SoundPlayer gameSongPlayer;
 	Song currentSong;
@@ -139,11 +146,34 @@ public class GameScreenController extends ScreenController {
 		setupRails();
 		setupHitBar();
 		setupText();
-    
+		setupStatusLabels();
+		
 		return screenCanvas;
 	}
+	
+	private void setupStatusLabels() {
+		Font font;
+		try {
+			font = Font.createFont(Font.TRUETYPE_FONT, getClass().getResource("../Fonts/ARDESTINE.TTF").openStream());
+			GraphicsEnvironment graphicsEnvironment = GraphicsEnvironment.getLocalGraphicsEnvironment();
+			graphicsEnvironment.registerFont(font);
+			font = font.deriveFont(32f);
+			scoreLabel = new JLabel("score label not set");			
+			hpLabel = new JLabel("hp label not set");
+			scoreLabel.setFont(font);
+			hpLabel.setFont(font);
+			scoreLabel.setBounds(100, 550, 100, 100);
+			hpLabel.setBounds(100, 100, 100, 100);
+			screenCanvas.add(scoreLabel);
+			screenCanvas.add(hpLabel);
+		} catch (FontFormatException  | IOException e) {
+			e.printStackTrace();		
+		}
+		
+		
+	}
 
-  private void setupText() {		
+	private void setupText() {		
 		// TODO Auto-generated method stub		
 		ImageIcon healthIcon = new ImageIcon(Main.class.getResource("../Images/componentImages/Game-Health.png"));		
 		JButton healthButton = new JButton(healthIcon);		
@@ -296,6 +326,10 @@ public class GameScreenController extends ScreenController {
 		TimerTask checkHPLoss = new TimerTask() {
 			@Override
 			public void run() {
+				int score = playerStatus.getScore();
+				float hp = playerStatus.getHP();
+				scoreLabel.setText(String.valueOf(score));
+				hpLabel.setText(String.valueOf(hp));
 				if (playerStatus.getHP() < MINIMUM_HP)
 					handleLoss();
 			}

@@ -45,8 +45,7 @@ public class SettingsScreenController extends ScreenController {
 	}
   
 	private void setTolerance() {
-		ApplicationManager.TOLERANCE = 1; 
-    // TODO: figure out what type this should be difficultyBar.getWidth()/BAR_WIDTH;
+		ApplicationManager.TOLERANCE = (float)difficultyBar.getWidth()/BAR_WIDTH;
 	}
 
 	private void setupDifficultyBar() {

@@ -8,7 +8,7 @@ public class ApplicationManager implements Observer {
 	public static final int SCREEN_HEIGHT = 720;
 	public static final int SCREEN_WIDTH = 1280;
 	public static float VOLUME = 1f;
-	public static int TOLERANCE = 0;
+	public static float TOLERANCE = 1f;
 	public static int SELECTION = 0; 
 	
 	public ScreenController currentScreen;

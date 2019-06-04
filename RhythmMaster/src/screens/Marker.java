@@ -11,11 +11,11 @@ public class Marker extends DrawableRectangle {
 	private static final int HITBAR_Y_COORD = 670;
 	private static final int OBSERVER_WINDOW_SIZE = 50;
 	private static final int Y_COORD_STEP_SIZE = 2;
-	private static Color blue = new Color(0x46, 0x9d, 0xff);
-	private static Color red = new Color(0xeb, 0x69, 0x6e);
-	private static Color green = new Color(0x47,0xeb,0x94);
-	private static Color yellow = new Color(0xff,0xe4,0x80);
-	private static Color[] colors = {blue,red,green,yellow};
+	private static final Color blue = new Color(0x46, 0x9d, 0xff);
+	private static final Color red = new Color(0xeb, 0x69, 0x6e);
+	private static final Color green = new Color(0x47,0xeb,0x94);
+	private static final Color yellow = new Color(0xff,0xe4,0x80);
+	private static final Color[] colors = {blue,red,green,yellow};
 
 	private int railIndex;
 	protected ObservableYCoord y_coord;
