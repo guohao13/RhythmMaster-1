@@ -4,6 +4,7 @@ import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.event.ActionListener;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,7 +16,8 @@ public class Canvas extends JPanel {
 	private static final long serialVersionUID = 1L;
 	private Image background;
 	private List<JButton> canvasButtons = new ArrayList<JButton>();
-	private List<Drawable> dynamicDrawables = new ArrayList<Drawable>(), staticDrawables = new ArrayList<Drawable>();
+	private ArrayList<Drawable>staticDrawables = new ArrayList<Drawable>();
+	private ArrayDeque<Drawable> dynamicDrawables = new ArrayDeque<Drawable>();
 	
 	
 	public Canvas() {
@@ -28,8 +30,8 @@ public class Canvas extends JPanel {
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		g.drawImage(background, 0, 0, ApplicationManager.SCREEN_WIDTH, ApplicationManager.SCREEN_HEIGHT, this);
-		for(Drawable d: staticDrawables) {
-			d.draw(g);
+		for(Drawable s: staticDrawables) {
+			s.draw(g);
 		}
 		for (Drawable d : dynamicDrawables) {
 			d.draw(g);
@@ -54,13 +56,26 @@ public class Canvas extends JPanel {
 		return c;
 	}
 	
-	public Drawable addDynamicDrawable(Drawable d) {
-		dynamicDrawables.add(d);
-		repaint();
-		return d;
+	public ArrayDeque<Marker> getDynamicList(){
+		ArrayDeque<Marker> m = new ArrayDeque<Marker>();
+		for(Drawable d : dynamicDrawables) {
+			if (d instanceof Marker) {
+				m.add((Marker)d);
+			}
+		}
+		return m;
+	}
+	public ArrayList<Drawable> getStaticList(){
+		return staticDrawables;
 	}
 	
-	public Drawable addStaticDrawable(Drawable d) {
+	synchronized public Drawable addDynamicDrawable(Drawable m) {
+		dynamicDrawables.add(m);
+		repaint();
+		return m;
+	}
+	
+	synchronized public Drawable addStaticDrawable(Drawable d) {
 		staticDrawables.add(d);
 		repaint();
 		return d;
@@ -74,11 +89,17 @@ public class Canvas extends JPanel {
 	}
 	
 	public void removeMarker() {
-		Marker m;
-		for(int x = 0; x < dynamicDrawables.size(); x++) {
-			m = (Marker) dynamicDrawables.get(x);
-			if(m.y > 720)
-				dynamicDrawables.remove(x);
+		
+		for(int i = 0; i < dynamicDrawables.size(); i++) {
+			Drawable d = dynamicDrawables.pop();
+			if (d instanceof Marker) {
+				if (((Marker) d).y <= 720){
+					dynamicDrawables.push(d);
+					
+				}
+			}
 		}
 	}
+	
+	
 }
