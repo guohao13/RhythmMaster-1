@@ -9,9 +9,9 @@ public class Marker extends DrawableRectangle {
 	private static final int HITBAR_TOP_Y = 560;
 	private static final int HITBAR_BOTTOM_Y = 610;
 	private static final int HITBAR_Y_COORD = 670;
-  private static final int OBSERVER_WINDOW_SIZE = 50;
-  private static final int Y_COORD_STEP_SIZE = 2;
-  private static Color blue = new Color(0x46, 0x9d, 0xff);
+	private static final int OBSERVER_WINDOW_SIZE = 50;
+	private static final int Y_COORD_STEP_SIZE = 2;
+	private static Color blue = new Color(0x46, 0x9d, 0xff);
 	private static Color red = new Color(0xeb, 0x69, 0x6e);
 	private static Color green = new Color(0x47,0xeb,0x94);
 	private static Color yellow = new Color(0xff,0xe4,0x80);
