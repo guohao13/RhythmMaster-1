@@ -6,29 +6,36 @@ import java.util.Observable;
 
 public class Marker extends DrawableRectangle {
 	private static final int SIDE_LENGTH = 40;
-    private static final int HITBAR_TOP_Y = 560;
-    private static final int HITBAR_BOTTOM_Y = 610;
+	private static final int HITBAR_TOP_Y = 560;
+	private static final int HITBAR_BOTTOM_Y = 610;
+	private static final int HITBAR_Y_COORD = 670;
 	private static final int OBSERVER_WINDOW_SIZE = 50;
 	private static final int Y_COORD_STEP_SIZE = 2;
-	
-    private int railIndex;
-	public ObservableYCoord y_coord;
+	private int railIndex;
+	private ObservableYCoord y_coord;
 	public boolean isInHitbar = false;
 
 	Marker(int x, int y, int railIndex) {
-		super(x,y,SIDE_LENGTH,SIDE_LENGTH,Color.GRAY);
+		super(x, y, SIDE_LENGTH, SIDE_LENGTH, colors[railIndex]);
 		this.center = true;
 		this.filled = true;
 		this.railIndex = railIndex;
 		this.y_coord = new ObservableYCoord(this);
 		this.y_coord.setValue(y);
+		this.id = currentID++;
+	}
+
+	@Override
+	public String toString() {
+		String s = "xpos = " + this.x + " ypos = " + this.y + " id = " + this.id;
+		return s;
 	}
 
 	@Override
 	public void draw(Graphics g) {
 		super.draw(g);
 	}
-	
+
 	public int getRailIndex() {
 		return railIndex;
 	}
@@ -41,9 +48,9 @@ public class Marker extends DrawableRectangle {
 	public void addObserver(HitDetectionObserver obs) {
 		y_coord.addObserver(obs);
 	}
-	
+
 	public class ObservableYCoord extends Observable {
-		
+
 		Marker parent;
 		private int y_coord;
 		private final int TOLERANCE_IN_PIXELS = (int) (ApplicationManager.TOLERANCE * (float)50);

@@ -38,20 +38,21 @@ public class SongMenuScreenController extends ScreenController {
 
 		screenCanvas.addButton(songsButton);
 		
-		ImageIcon badAppleIcon = new ImageIcon(Main.class.getResource("../Images/badapple.png"));
-		JButton badAppleButton = new JButton(badAppleIcon);
-		badAppleButton.setBounds(1280 / 3 - badAppleIcon.getIconWidth() / 2, 720 *3/ 5 - badAppleIcon.getIconHeight() / 2, badAppleIcon.getIconWidth(), badAppleIcon.getIconHeight());
-		badAppleButton.setContentAreaFilled(false);
-		badAppleButton.setBorderPainted(false);
+		ImageIcon wiiThemeIcon = new ImageIcon(Main.class.getResource("../Images/wiitheme.png"));
+		JButton wiiThemeButton = new JButton(wiiThemeIcon);
+		wiiThemeButton.setBounds(1280 / 3 - wiiThemeIcon.getIconWidth() / 2, 720 *3/ 5 - wiiThemeIcon.getIconHeight() / 2,
+				wiiThemeIcon.getIconWidth(), wiiThemeIcon.getIconHeight());
+		wiiThemeButton.setContentAreaFilled(false);
+		wiiThemeButton.setBorderPainted(false);
 
-		badAppleButton.addActionListener(new ActionListener() {
+		wiiThemeButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
 				ApplicationManager.SELECTION = 1;
 				requestScreenChangeTo(Screen.GAME);
 			}
 		});
 
-		screenCanvas.addButton(badAppleButton);
+		screenCanvas.addButton(wiiThemeButton);
 		
 		ImageIcon butterflyIcon = new ImageIcon(Main.class.getResource("../Images/butterfly.png"));
 		JButton butterflyButton = new JButton(butterflyIcon);
@@ -69,17 +70,5 @@ public class SongMenuScreenController extends ScreenController {
 
 		screenCanvas.addButton(butterflyButton);
 		
-		JButton	button = new JButton(new ImageIcon(Main.class.getResource("../Images/testButton.png")));
-		button.setBounds(200,400,200,100);
-		button.setContentAreaFilled(false);
-		button.setBorderPainted(false);
-		
-		button.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent event) {
-				ApplicationManager.SELECTION = 1;
-				requestScreenChangeTo(Screen.SETTINGS);
-			}
-		});
-		screenCanvas.addButton(button);
 	}
 }

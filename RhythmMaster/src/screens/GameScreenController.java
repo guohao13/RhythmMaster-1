@@ -28,13 +28,18 @@ import song.Song;
 import status.Status;
 
 public class GameScreenController extends ScreenController {
+	static int timescalled = 0;
 	int globalYOffset = -20;
-	int screenCenterX = 1280 / 2, screenCenterY =  680/ 2, railSpacing = 150, railWidth = 10, railHeight = 600, hitBarWidth = 700, hitBarHeight = 50;
-	int railTop = 60, rail1x = screenCenterX - railSpacing*3/2 - railWidth/2, rail2x = screenCenterX - railSpacing/2 - railWidth/2, rail3x = screenCenterX + railSpacing/2 - railWidth/2, rail4x = screenCenterX + railSpacing*3/2 - railWidth/2;
+	int screenCenterX = 1280 / 2, screenCenterY = 680 / 2, railSpacing = 150, railWidth = 10, railHeight = 600,
+			hitBarWidth = 700, hitBarHeight = 50;
+	int railTop = 60, rail1x = screenCenterX - railSpacing * 3 / 2 - railWidth / 2,
+			rail2x = screenCenterX - railSpacing / 2 - railWidth / 2,
+			rail3x = screenCenterX + railSpacing / 2 - railWidth / 2,
+			rail4x = screenCenterX + railSpacing * 3 / 2 - railWidth / 2;
 	int dy = 2;
 	int markerIndex = 0;
 	DrawableRectangle hitBar;
-	List<Marker> markers = new ArrayList<Marker>();
+	ArrayDeque<Marker> markers = new ArrayDeque<Marker>();
 	Timer screenTimer;
 	Timer updateTimer;
 	Timer winLossTimer;
@@ -135,17 +140,17 @@ public class GameScreenController extends ScreenController {
 
 	private void setupRails() {	
 		System.out.println("setting up rails!" + screenCenterX + " ");
-		DrawableRectangle rail1 = new DrawableRectangle(screenCenterX - railSpacing * 3 / 2 - railWidth / 2,
-				60, railWidth, railHeight, Color.RED);
+		DrawableRectangle rail1 = new DrawableRectangle(screenCenterX - railSpacing * 3 / 2 - railWidth / 2, 60,
+				railWidth, railHeight, Color.RED);
 		rail1.setFilled(true);
-		DrawableRectangle rail2 = new DrawableRectangle(screenCenterX - railSpacing / 2 - railWidth / 2,
-				60, railWidth, railHeight, Color.RED);
+		DrawableRectangle rail2 = new DrawableRectangle(screenCenterX - railSpacing / 2 - railWidth / 2, 60, railWidth,
+				railHeight, Color.RED);
 		rail2.setFilled(true);
-		DrawableRectangle rail3 = new DrawableRectangle(screenCenterX + railSpacing / 2 - railWidth / 2,
-				60, railWidth, railHeight, Color.RED);
+		DrawableRectangle rail3 = new DrawableRectangle(screenCenterX + railSpacing / 2 - railWidth / 2, 60, railWidth,
+				railHeight, Color.RED);
 		rail3.setFilled(true);
-		DrawableRectangle rail4 = new DrawableRectangle(screenCenterX + railSpacing * 3 / 2 - railWidth / 2,
-				60, railWidth, railHeight, Color.RED);
+		DrawableRectangle rail4 = new DrawableRectangle(screenCenterX + railSpacing * 3 / 2 - railWidth / 2, 60,
+				railWidth, railHeight, Color.RED);
 		rail4.setFilled(true);
 
 		screenCanvas.addStaticDrawable(rail1);
@@ -155,7 +160,7 @@ public class GameScreenController extends ScreenController {
 	}
 
 	private void setupHitBar() {
-		hitBar = new DrawableRectangle(screenCenterX - this.hitBarWidth / 2, 560 - hitBarHeight/2, hitBarWidth,
+		hitBar = new DrawableRectangle(screenCenterX - this.hitBarWidth / 2, 560 - hitBarHeight / 2, hitBarWidth,
 				hitBarHeight, Color.RED);
 		hitBar.setFilled(true);
 		screenCanvas.addStaticDrawable(hitBar);
@@ -164,17 +169,39 @@ public class GameScreenController extends ScreenController {
 	public void changeHitBarColor(Color c) {
 		hitBar.setColor(c);
 	}
-	
+
+	public void flashHitBarColor() {
+
+		Thread t = new Thread(new Runnable() {
+
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				hitBar.c = Color.GREEN;
+				try {
+					Thread.sleep(100);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				hitBar.c = Color.RED;
+
+			}
+
+		});
+		t.start();
+	}
+
 	public void setupKeys() {
 		ActionMap actionMap = screenCanvas.getActionMap();
-		int focusCondition = JComponent.WHEN_IN_FOCUSED_WINDOW;    
+		int focusCondition = JComponent.WHEN_IN_FOCUSED_WINDOW;
 		InputMap inputMap = screenCanvas.getInputMap(focusCondition);
 
 		String railZero = "RAIL_ZERO";
 		String railOne = "RAIL_ONE";
 		String railTwo = "RAIL_TWO";
 		String railThree = "RAIL_THREE";
-	     
+
 		inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_1, 0), railZero);
 		inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_2, 0), railOne);
 		inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_3, 0), railTwo);
@@ -185,7 +212,7 @@ public class GameScreenController extends ScreenController {
 		actionMap.put(railTwo, new KeyAction(railTwo));
 		actionMap.put(railThree, new KeyAction(railThree));
 	}
-		
+
 	private class KeyAction extends AbstractAction {
 		private static final long serialVersionUID = 1L;
 
@@ -196,6 +223,7 @@ public class GameScreenController extends ScreenController {
 		public void actionPerformed(ActionEvent e) {
 			int clipTimeOfInput = gameSongPlayer.getClipTime();
 			switch (e.getActionCommand()) {
+<<<<<<< HEAD
 				case "RAIL_ZERO":
 					hitDetectionObserver.registerKeypress(0);
 					//handleKeyPressed(0, clipTimeOfInput);
@@ -217,54 +245,26 @@ public class GameScreenController extends ScreenController {
 	}
 	
 	public void handleKeyPressed (int railNumber, int clipTimeOfInput) {
-		/*
-		int beatIndex = -1;
-		if(clipTimeOfInput < 0) 
-			playerStatus.updateStatus(false);	// key input before song clip has started playing
-		else {
-			beatIndex = timeToBeat(clipTimeOfInput);
-			boolean[] beats = currentSong.getBitsAt(beatIndex);
-			int timeOfBeat = beatToTime(beatIndex);
-			long tolerance = 1000000;
-			if(beats[railNumber] && Math.abs(clipTimeOfInput - timeOfBeat)/1000 <= tolerance) {
-				playerStatus.updateStatus(true);
-				System.out.println("  HIT ");
-			}
-			else {
-				playerStatus.updateStatus(false);
-				System.out.println("miss press.... ");
-			}
-		}
-		System.out.println("Key for rail " + railNumber + " pressed at Beat " + beatIndex);	
-		
-		if(missedNoteObs.registerKeypress(railNumber)) {
-			System.out.println("HIT on rail " + railNumber);
-			playerStatus.updateStatus(true);
-			
-		}
-		else {
-			System.out.println("MISS on rail " + railNumber);
-			playerStatus.updateStatus(false);
-		}
-		*/
 		hitDetectionObserver.registerKeypress(railNumber);
+		flashHitBarColor();
+		System.out.println("Key for rail " + railNumber + " pressed at Beat " + beatIndex);
 	}
-	
+
 	public int getCurrentBeat() {
-		if(gameSongPlayer.isPlaying())
+		if (gameSongPlayer.isPlaying())
 			return timeToBeat(gameSongPlayer.getClipTime());
 		else
 			return -1;
 	}
-	
+
 	private int timeToBeat(int clipTime) {
 		return ((int)Math.floorDiv((long)clipTime, ( 1000 * currentSong.getMSPerBeat())));
 	}
-	
+
 	private int beatToTime(int beatIndex) {
 		return beatIndex * currentSong.getMSPerBeat() * 1000;
 	}
-	
+
 	private void playGameSong(int selection) {
 		System.out.println("play game song");
 		gameSongPlayer = new SoundPlayer(SONG_OPTIONS[selection]);
@@ -272,22 +272,22 @@ public class GameScreenController extends ScreenController {
 
 	private void setupWinLossTimer() {
 		playerStatus = new Status();
-		
+
 		TimerTask checkHPLoss = new TimerTask() {
 			@Override
-	        public void run() {
+			public void run() {
 				if (playerStatus.getHP() < MINIMUM_HP)
 					handleLoss();
-	        }
+			}
 		};
-		
+
 		TimerTask endOfSongWin = new TimerTask() {
 			@Override
-	        public void run() {
+			public void run() {
 				handleWin();
-		    }
+			}
 		};
-		
+
 		winLossTimer = new Timer("winLossTimer");
 		winLossTimer.scheduleAtFixedRate(checkHPLoss, 0, 100);
 		winLossTimer.schedule(endOfSongWin, Math.floorDiv(gameSongPlayer.getClipLength(), 1000) + 1);
@@ -302,7 +302,7 @@ public class GameScreenController extends ScreenController {
 		};
 		screenTimer.scheduleAtFixedRate(beat, 0, MARKER_SPAWN_RATE);
 	}
-	
+
 	private void handleLoss() {
 		winLossTimer.cancel();
 		screenTimer.cancel();
@@ -311,17 +311,20 @@ public class GameScreenController extends ScreenController {
 		}
 		int timeSurvived = Math.floorDiv(gameSongPlayer.getClipTime(), 1000000);
 		gameSongPlayer.stopClip();
-		JOptionPane.showMessageDialog(screenCanvas, "You lost \nYour hit percent was too low \nBut you survived " + timeSurvived + " seconds!", "Sorry", JOptionPane.WARNING_MESSAGE);
+		JOptionPane.showMessageDialog(screenCanvas,
+				"You lost \nYour hit percent was too low \nBut you survived " + timeSurvived + " seconds!", "Sorry",
+				JOptionPane.WARNING_MESSAGE);
 		requestScreenChangeTo(Screen.MAIN_MENU);
 	}
-	
+
 	private void handleWin() {
 		winLossTimer.cancel();
 		gameSongPlayer.stopClip();
-		JOptionPane.showMessageDialog(screenCanvas, "You won! \nYou scored " + playerStatus.getScore(), "Congratulations!", JOptionPane.WARNING_MESSAGE);
-		requestScreenChangeTo(Screen.MAIN_MENU);		
+		JOptionPane.showMessageDialog(screenCanvas, "You won! \nYou scored " + playerStatus.getScore(),
+				"Congratulations!", JOptionPane.WARNING_MESSAGE);
+		requestScreenChangeTo(Screen.MAIN_MENU);
 	}
-	
+
 	private void setupSongAndMissedNoteObs() {
 		currentSong = new Song(ApplicationManager.SELECTION);
 		MARKER_SPAWN_RATE = currentSong.getMSPerBeat() / 10; // Math.round( (float)currentSong.getMSPerBeat() / (float)10) + 1;
