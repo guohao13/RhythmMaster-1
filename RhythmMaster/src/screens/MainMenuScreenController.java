@@ -10,7 +10,7 @@ public class MainMenuScreenController extends ScreenController {
 
 	public MainMenuScreenController() {
 		screenType = Screen.MAIN_MENU;
-		screenMusicPath = "../Sounds/WiiMenu.wav";
+		screenMusicPath = "../Sounds/BadApple.wav";
 		screenBackgroundPath = "../Images/backgroundImages/background-Menu.png";
 		setupDisplayAndMusic();
 	}
@@ -21,7 +21,6 @@ public class MainMenuScreenController extends ScreenController {
 		screenCanvas = new Canvas();
 		screenCanvas.setBackground(screenBackgroundPath);
 		setupButtons();
-		setupText();
 		return screenCanvas;
 	}
 	
@@ -62,11 +61,5 @@ public class MainMenuScreenController extends ScreenController {
 		screenCanvas.addButton(settingsButton);
 		
 		
-	}
-	
-	
-	
-	private void setupText() {
-		ImageIcon menuIcon = new ImageIcon(Main.class.getResource("../Images/MENU.png"));	
 	}
 }

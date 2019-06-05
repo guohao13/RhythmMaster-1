@@ -1,12 +1,8 @@
 package screens;
 
-import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
-import java.util.Queue;
-
-import screens.Marker.ObservableYCoord;
 
 public class HitDetectionObserver implements Observer {
 	

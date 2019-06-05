@@ -5,19 +5,13 @@ import java.awt.Font;
 import java.awt.FontFormatException;
 import java.awt.GraphicsEnvironment;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 import java.io.IOException;
 
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Observer;
-import java.util.Random;
 import java.awt.event.KeyEvent;
-import java.util.ArrayDeque;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.concurrent.TimeUnit;
 
 import javax.swing.AbstractAction;
 import javax.swing.ActionMap;
@@ -59,9 +53,7 @@ public class GameScreenController extends ScreenController {
 	Song currentSong;
 	HitDetectionObserver hitDetectionObserver;
 	static final float MINIMUM_HP = 0.5f;
-	static final String[] SONG_OPTIONS = {
-											"../Sounds/Butterfly.wav",
-											"../Sounds/WiiMenu.wav" };
+
 	static int MARKER_SPAWN_RATE;
 	
 	public GameScreenController() {
@@ -173,8 +165,7 @@ public class GameScreenController extends ScreenController {
 		
 	}
 
-	private void setupText() {		
-		// TODO Auto-generated method stub		
+	private void setupText() {			
 		ImageIcon healthIcon = new ImageIcon(Main.class.getResource("../Images/componentImages/Game-Health.png"));		
 		JButton healthButton = new JButton(healthIcon);		
 		healthButton.setBounds(ApplicationManager.SCREEN_WIDTH / 32, ApplicationManager.SCREEN_HEIGHT/8-healthIcon.getIconHeight()/2,		
@@ -231,15 +222,13 @@ public class GameScreenController extends ScreenController {
 
 			@Override
 			public void run() {
-				// TODO Auto-generated method stub
 				hitBar.c = Color.GREEN;
 				try {
 					Thread.sleep(100);
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				hitBar.c = Color.RED;
+				hitBar.c = Color.BLACK;
 
 			}
 
@@ -276,28 +265,27 @@ public class GameScreenController extends ScreenController {
 		}
 
 		public void actionPerformed(ActionEvent e) {
-			int clipTimeOfInput = gameSongPlayer.getClipTime();
 			switch (e.getActionCommand()) {
 				case "RAIL_ZERO":
-					hitDetectionObserver.registerKeypress(0);
+					handleKeyPressed(0);
 					break;
 				case "RAIL_ONE":
-					hitDetectionObserver.registerKeypress(1);
+					handleKeyPressed(1);
 					break;
 				case "RAIL_TWO":
-					hitDetectionObserver.registerKeypress(2);
+					handleKeyPressed(2);
 					break;
 				case "RAIL_THREE":
-					hitDetectionObserver.registerKeypress(3);
+					handleKeyPressed(3);
 					break;
 			}
 		}
 	}
 	
-	public void handleKeyPressed (int railNumber, int clipTimeOfInput) {
+	public void handleKeyPressed (int railNumber) {
 		hitDetectionObserver.registerKeypress(railNumber);
 		flashHitBarColor();
-		System.out.println("Key for rail " + railNumber + " pressed at Beat ");
+		System.out.println("Key for rail " + railNumber + " pressed");
 	}
 
 	public int getCurrentBeat() {
@@ -317,7 +305,7 @@ public class GameScreenController extends ScreenController {
 
 	private void playGameSong(int selection) {
 		System.out.println("play game song");
-		gameSongPlayer = new SoundPlayer(SONG_OPTIONS[selection]);
+		gameSongPlayer = new SoundPlayer(ApplicationManager.SONG_OPTIONS[selection]);
 	}
 
 	private void setupWinLossTimer() {
@@ -344,7 +332,7 @@ public class GameScreenController extends ScreenController {
 
 		winLossTimer = new Timer("winLossTimer");
 		winLossTimer.scheduleAtFixedRate(checkHPLoss, 0, 100);
-		winLossTimer.schedule(endOfSongWin, Math.floorDiv(gameSongPlayer.getClipLength(), 1000) + 1);
+		winLossTimer.schedule(endOfSongWin, Math.floorDiv(gameSongPlayer.getClipLength(), 1000) + 2500);
 		
 		TimerTask beat = new TimerTask() {
 			int time = 0;

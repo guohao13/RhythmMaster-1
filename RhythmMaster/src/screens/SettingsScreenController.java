@@ -5,7 +5,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionAdapter;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -13,9 +12,9 @@ import javax.swing.JButton;
 public class SettingsScreenController extends ScreenController {
 	private int BAR_WIDTH = 300, BAR_HEIGHT = 50, BORDER_WIDTH = 10;
 	DrawableRectangle volumeBar = new DrawableRectangle(1280 / 4 - BAR_WIDTH / 2, 720 * 3 / 4 - BAR_HEIGHT / 2,
-			BAR_WIDTH, BAR_HEIGHT, Color.RED);
+			BAR_WIDTH, BAR_HEIGHT, new Color(0xeb, 0x69, 0x6e));
 	DrawableRectangle difficultyBar = new DrawableRectangle(1280 * 3 / 4 - BAR_WIDTH / 2, 720 * 3 / 4 - BAR_HEIGHT / 2,
-			BAR_WIDTH, BAR_HEIGHT, Color.RED);
+			BAR_WIDTH, BAR_HEIGHT, new Color(0xeb, 0x69, 0x6e));
 	DrawableRectangle volumeBacker = new DrawableRectangle(1280 / 4 - BAR_WIDTH / 2 - BORDER_WIDTH,
 			720 * 3 / 4 - BAR_HEIGHT / 2 - BORDER_WIDTH, BAR_WIDTH + 2 * BORDER_WIDTH, BAR_HEIGHT + 2 * BORDER_WIDTH,
 			Color.BLACK);

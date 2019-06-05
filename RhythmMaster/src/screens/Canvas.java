@@ -4,7 +4,6 @@ import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.event.ActionListener;
-import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -85,11 +84,14 @@ public class Canvas extends JPanel {
 	public void removeMarker() {
 		
 		for(int i = 0; i < dynamicDrawables.size(); i++) {
-			Drawable d = dynamicDrawables.pop();
+			Drawable d = dynamicDrawables.get(i);
+			dynamicDrawables.remove(i);
 			if (d instanceof Marker) {
 				if (((Marker) d).y <= 720){
-					dynamicDrawables.push(d);
-					
+					dynamicDrawables.add(i, d);
+				}
+				else {
+					--i;
 				}
 			}
 		}

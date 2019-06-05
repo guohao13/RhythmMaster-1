@@ -5,6 +5,7 @@ import java.awt.Graphics;
 import java.awt.Rectangle;
 
 public class DrawableRectangle extends Rectangle implements Drawable {
+	private static final long serialVersionUID = 1L;
 
 	protected Color c;
 	protected boolean filled = true;

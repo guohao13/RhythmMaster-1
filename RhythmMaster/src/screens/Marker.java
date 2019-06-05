@@ -5,12 +5,14 @@ import java.awt.Graphics;
 import java.util.Observable;
 
 public class Marker extends DrawableRectangle {
+	private static final long serialVersionUID = 1L;
+	
 	private static final int SIDE_LENGTH = 40;
 	private static final int HITBAR_TOP_Y = 560;
 	private static final int HITBAR_BOTTOM_Y = 610;
 	private static final int HITBAR_Y_COORD = 670;
 	private static final int OBSERVER_WINDOW_SIZE = 50;
-	private static final int Y_COORD_STEP_SIZE = 2;
+	private static final int Y_COORD_STEP_SIZE = 2;			// TODO: Consider deletion
 	private static final Color blue = new Color(0x46, 0x9d, 0xff);
 	private static final Color red = new Color(0xeb, 0x69, 0x6e);
 	private static final Color green = new Color(0x47,0xeb,0x94);

@@ -5,6 +5,10 @@ import java.util.Observer;
 
 public class ApplicationManager implements Observer {
 
+	public static final String[] SONG_OPTIONS = { 	
+			"../Sounds/Butterfly.wav",
+			"../Sounds/WiiMenu.wav" };
+	
 	public static final int SCREEN_HEIGHT = 720;
 	public static final int SCREEN_WIDTH = 1280;
 	public static float VOLUME = 1f;
