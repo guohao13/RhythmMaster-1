@@ -3,7 +3,7 @@ package screens;
 import java.util.Observable;
 import java.util.Observer;
 
-public class ApplicationManager implements Observer {
+public final class ApplicationManager implements Observer {
 
 	public static final String[] SONG_OPTIONS = { 	
 			"../Sounds/Butterfly.wav",
