@@ -31,14 +31,4 @@ public class Rail {
 	public boolean getBitAt(int index) {
 		return bits.get(index);
 	}
-	
-	public ArrayDeque<Integer> getTimeMap() {
-		ArrayDeque<Integer> timeMap = new ArrayDeque<>();
-		for(int x = 0; x < bits.size(); x++) {
-			if(bits.get(x))
-				timeMap.add(x * 60000000);
-		}
-		
-		return timeMap;
-	}
 }

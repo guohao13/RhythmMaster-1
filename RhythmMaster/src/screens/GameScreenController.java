@@ -44,7 +44,6 @@ public class GameScreenController extends ScreenController {
 	DrawableRectangle hitBar;
 	ArrayList<Marker> markers = new ArrayList<Marker>();
 	Timer screenTimer;
-	Timer updateTimer;
 	Timer winLossTimer;
 	JLabel hpLabel;
 	JLabel scoreLabel;
@@ -65,8 +64,9 @@ public class GameScreenController extends ScreenController {
 		setupKeys();
 		setupSongAndMissedNoteObs();
 		playGameSong(ApplicationManager.SELECTION);
-		setupWinLossTimer();
 		setupMarkerTimer();
+		setupWinLossTimer();
+		
 	}
 	
 	private void setupMarkerTimer() {
@@ -88,8 +88,8 @@ public class GameScreenController extends ScreenController {
 					m = markers.get(x);
 					m.setLocation(m.x, m.y + dy);
 					if (m.getY() > 720) {
-						markers.remove(x);
-						screenCanvas.removeMarker();
+						markers.remove(m);
+						screenCanvas.removeMarker(m);
 					}
 				}
 				screenCanvas.repaint();
@@ -348,11 +348,10 @@ public class GameScreenController extends ScreenController {
 	private void handleLoss() {
 		winLossTimer.cancel();
 		screenTimer.cancel();
-		for(Marker m : markers) {
-			m.y_coord.deleteObserver(hitDetectionObserver);
-		}
-		int timeSurvived = Math.floorDiv(gameSongPlayer.getClipTime(), 1000000);
 		gameSongPlayer.stopClip();
+		for(Marker m : markers)
+			m.y_coord.deleteObserver(hitDetectionObserver);
+		int timeSurvived = Math.floorDiv(gameSongPlayer.getClipTime(), 1000000);
 		JOptionPane.showMessageDialog(screenCanvas,
 				"You lost \nYour hit percent was too low \nBut you survived " + timeSurvived + " seconds!", "Sorry",
 				JOptionPane.WARNING_MESSAGE);
@@ -361,6 +360,9 @@ public class GameScreenController extends ScreenController {
 
 	private void handleWin() {
 		winLossTimer.cancel();
+		screenTimer.cancel();
+		for(Marker m : markers)
+			m.y_coord.deleteObserver(hitDetectionObserver);
 		gameSongPlayer.stopClip();
 		JOptionPane.showMessageDialog(screenCanvas, "You won! \nYou scored " + playerStatus.getScore(),
 				"Congratulations!", JOptionPane.WARNING_MESSAGE);
@@ -369,8 +371,7 @@ public class GameScreenController extends ScreenController {
 
 	private void setupSongAndMissedNoteObs() {
 		currentSong = new Song(ApplicationManager.SELECTION);
-		MARKER_SPAWN_RATE = currentSong.getMSPerBeat() / 10; // Math.round( (float)currentSong.getMSPerBeat() / (float)10) + 1;
-				//-Math.floorDiv(-currentSong.getMSPerBeat(), 10);//currentSong.getMSPerBeat() / 10;
+		MARKER_SPAWN_RATE = currentSong.getMSPerBeat();
 		hitDetectionObserver = new HitDetectionObserver(this);
 	}
 }

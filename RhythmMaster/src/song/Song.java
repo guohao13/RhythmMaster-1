@@ -7,19 +7,19 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+import screens.ApplicationManager;
 import screens.Main;
 
 public class Song {
-	static final String[] SONG_PATHS = { 	"../levels/butterfly.txt",	// TODO: move to ApplicationManager static vars
-											"../levels/wiimenu.txt" };
-	private static final int NUM_RAILS = 4;
-	
 	private String songName;
 	private Scanner fileScanner;
 	private int msPerBeat = 0;
 	private int lengthInTicks;
 	private BeatMap beatMap;
 	private ArrayList<ArrayDeque<Integer>> timeMap;
+	private static final String[] SONG_PATHS = {
+				"../levels/butterfly.txt",
+				"../levels/wiimenu.txt" 		};
 	
 	public Song(int selection) {	
 		processFile(SONG_PATHS[selection]);
@@ -47,15 +47,14 @@ public class Song {
 			msPerBeat = Integer.parseInt(fileScanner.nextLine());
 			lengthInTicks = Integer.parseInt(fileScanner.nextLine());
 					
-			boolean[][] railData = new boolean[NUM_RAILS][lengthInTicks];
+			boolean[][] railData = new boolean[4][lengthInTicks];
 			for(int tickIndex = 0; tickIndex < lengthInTicks; tickIndex++) {
-				for(int railIndex = 0; railIndex < NUM_RAILS; railIndex++) {
+				for(int railIndex = 0; railIndex < 4; railIndex++) {
 					int x = fileScanner.nextInt();
 					railData[railIndex][tickIndex] = intToBool(x);
 				}
 			}
 			beatMap = new BeatMap(railData);
-			timeMap = beatMap.getTimeMap();
 		}
 	}
 	

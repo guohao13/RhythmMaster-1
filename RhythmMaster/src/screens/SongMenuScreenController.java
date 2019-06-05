@@ -41,7 +41,7 @@ public class SongMenuScreenController extends ScreenController {
     
 		ImageIcon wiiThemeIcon = new ImageIcon(Main.class.getResource("../Images/componentImages/Song-Wii.png"));
 		JButton wiiThemeButton = new JButton(wiiThemeIcon);
-		wiiThemeButton.setBounds(1280 / 32, 720 * 5/8 - wiiThemeIcon.getIconHeight() / 2, wiiThemeIcon.getIconWidth(),
+		wiiThemeButton.setBounds(1280 / 32, 720 * 6/8 - wiiThemeIcon.getIconHeight() / 2, wiiThemeIcon.getIconWidth(),
 				wiiThemeIcon.getIconHeight());
 		wiiThemeButton.setContentAreaFilled(false);
 		wiiThemeButton.setBorderPainted(false);
@@ -57,7 +57,7 @@ public class SongMenuScreenController extends ScreenController {
 
 		ImageIcon butterflyIcon = new ImageIcon(Main.class.getResource("../Images/componentImages/Song-Butterfly.png"));
 		JButton butterflyButton = new JButton(butterflyIcon);
-		butterflyButton.setBounds(1280 / 32, 720 * 6/8 - butterflyIcon.getIconHeight() / 2,
+		butterflyButton.setBounds(1280 / 32, 720 * 5/8 - butterflyIcon.getIconHeight() / 2,
 				butterflyIcon.getIconWidth(), butterflyIcon.getIconHeight());
 		butterflyButton.setContentAreaFilled(false);
 		butterflyButton.setBorderPainted(false);

@@ -81,19 +81,7 @@ public class Canvas extends JPanel {
 		}
 	}
 	
-	public void removeMarker() {
-		
-		for(int i = 0; i < dynamicDrawables.size(); i++) {
-			Drawable d = dynamicDrawables.get(i);
-			dynamicDrawables.remove(i);
-			if (d instanceof Marker) {
-				if (((Marker) d).y <= 720){
-					dynamicDrawables.add(i, d);
-				}
-				else {
-					--i;
-				}
-			}
-		}
+	public void removeMarker(Marker m) {
+		dynamicDrawables.remove(m);
 	}	
 }

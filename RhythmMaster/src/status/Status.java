@@ -8,14 +8,10 @@ public class Status {
 	
 	private int currentScore;		// cumulative point value of notes hit
 	private Health currentHealth;	// moving window of last 40 bits
-	private HitBar hitBar;
-	private ArrayDeque<Message> msgLog;
-	
+
 	public Status() {
 		currentScore = 0;
 		currentHealth = new Health();
-		hitBar = new HitBar();
-		msgLog = new ArrayDeque<>(MAX_MSGLOG_SIZE);
 	}
 	
 	public void updateStatus(boolean isHit) {
@@ -25,13 +21,7 @@ public class Status {
 		else
 			currentScore -= 5;
 	}
-	
-	public void addMsg(Message m) {
-		if(msgLog.size() >= MAX_MSGLOG_SIZE)
-			msgLog.remove();
-		msgLog.addLast(m);
-	}
-	
+
 	public float getHP() {
 		return(currentHealth.getHistoryHitPercent());
 	}
