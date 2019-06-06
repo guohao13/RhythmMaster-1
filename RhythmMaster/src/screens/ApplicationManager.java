@@ -7,7 +7,7 @@ public final class ApplicationManager implements Observer {
 
 	public static final String[] SONG_OPTIONS = { 	
 			"../Sounds/Butterfly.wav",
-			"../Sounds/WiiMenu.wav" };
+			"../Sounds/WiiMenu1point5sec.wav" };
 	
 	public static final int SCREEN_HEIGHT = 720;
 	public static final int SCREEN_WIDTH = 1280;
