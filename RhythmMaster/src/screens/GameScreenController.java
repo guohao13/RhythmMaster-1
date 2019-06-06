@@ -372,6 +372,6 @@ public class GameScreenController extends ScreenController {
 	private void setupSongAndMissedNoteObs() {
 		currentSong = new Song(ApplicationManager.SELECTION);
 		MARKER_SPAWN_RATE = currentSong.getMSPerBeat();
-		hitDetectionObserver = new HitDetectionObserver(this);
+		hitDetectionObserver = new HitDetectionObserver(this, screenCanvas);
 	}
 }

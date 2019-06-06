@@ -7,14 +7,12 @@ import java.util.Observer;
 public class HitDetectionObserver implements Observer {
 	
 	private GameScreenController parent;
-	private int[] railStatus = {0,0,0,0};	// index = rail #
-										// 0 = inactive
-										// 1 = in window,no keypress
-										// 2 = in window, key pressed
+	private Canvas canvas;
 	private ArrayList<Marker>[] markersInHitbar = new ArrayList[4];
 	
-	HitDetectionObserver(GameScreenController gsc) {
+	HitDetectionObserver(GameScreenController gsc, Canvas c) {
 		this.parent = gsc;
+		this.canvas = c;
 		for(int x = 0; x < 4; x++) {
 			markersInHitbar[x] = new ArrayList<>();
 		}
@@ -43,9 +41,11 @@ public class HitDetectionObserver implements Observer {
 		ArrayList<Marker> rail = markersInHitbar[railIndex];
 		
 		if(rail.size() > 0) {
+			Marker m = rail.get(0);
 			rail.remove(0);
 			System.out.println("HIT on rail " + railIndex);
 			parent.playerStatus.updateStatus(true);
+			canvas.removeMarker(m);	// stop displaying hit marker
 			return true;
 		}
 		else {
