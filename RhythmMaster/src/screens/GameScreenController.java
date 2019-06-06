@@ -348,10 +348,10 @@ public class GameScreenController extends ScreenController {
 	private void handleLoss() {
 		winLossTimer.cancel();
 		screenTimer.cancel();
-		gameSongPlayer.stopClip();
 		for(Marker m : markers)
 			m.y_coord.deleteObserver(hitDetectionObserver);
 		int timeSurvived = Math.floorDiv(gameSongPlayer.getClipTime(), 1000000);
+		gameSongPlayer.stopClip();
 		JOptionPane.showMessageDialog(screenCanvas,
 				"You lost \nYour hit percent was too low \nBut you survived " + timeSurvived + " seconds!", "Sorry",
 				JOptionPane.WARNING_MESSAGE);
