@@ -1,7 +1,9 @@
 package status;
 
+import screens.GameScreenController;
+
 public class Status {
-		
+	
 	private int currentScore;		// cumulative point value of notes hit
 	private int currentStreak;
 	private Health currentHealth;	// moving window of last 40 bits
@@ -14,6 +16,7 @@ public class Status {
 	
 	public void updateStatus(boolean isHit) {
 		currentHealth.updateHistory(isHit);
+		
 		if(isHit) {
 			currentScore += 10;
 			currentStreak++;
@@ -30,5 +33,9 @@ public class Status {
 	
 	public int getScore() {
 		return currentScore;
+	}
+	
+	public int getCurrentStreak() {
+		return currentStreak;
 	}
 }
