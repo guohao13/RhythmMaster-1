@@ -50,8 +50,12 @@ public class GameScreenController extends ScreenController {
 	final int dy = 2;
 	final String NOTE_STREAK = "<html>note<br/>streak!</html>";
 	
+	final int progressBarWidth = hitBarWidth;
+	final int progressBarHeight = hitBarHeight/5;
+	
 	int markerIndex;
 	DrawableRectangle hitBar;
+	DrawableRectangle progressBar;
 	ArrayList<Marker> markers = new ArrayList<Marker>();
 	
 	SoundPlayer gameSongPlayer;
@@ -79,10 +83,10 @@ public class GameScreenController extends ScreenController {
 		setupStreak();
 		setupMiscTimers();
 	}
-	
-	private void setupMarkerTimer() {
+
+  private void setupMarkerTimer() {
 		markerIndex = 0;
-		TimerTask ttMarkerSpawn, ttMarkerPos;
+		TimerTask ttMarkerSpawn, ttMarkerPos, ttSongPos;
 		
 		ttMarkerSpawn = new TimerTask() {
 			@Override
@@ -117,7 +121,7 @@ public class GameScreenController extends ScreenController {
 				}
 			}
 		};
-
+		
 		markerScheduler = Executors.newScheduledThreadPool(2);
 		markerScheduler.scheduleAtFixedRate(ttMarkerSpawn, 0, MARKER_SPAWN_RATE, TimeUnit.MICROSECONDS);
 		markerScheduler.scheduleAtFixedRate(ttMarkerPos, 0, 10, TimeUnit.MILLISECONDS);
@@ -161,6 +165,7 @@ public class GameScreenController extends ScreenController {
 		screenCanvas.setBackground(screenBackgroundPath);
 		setupRails();
 		setupHitBar();
+		setupProgressBar();
 		setupText();
 		
 		streakValue = new JLabel("   ");
@@ -173,6 +178,19 @@ public class GameScreenController extends ScreenController {
 		return screenCanvas;
 	}
 	
+	private void setupProgressBar() {
+		progressBar = new DrawableRectangle(screenCenterX - this.progressBarWidth / 2, 50 - progressBarHeight/2, 0,
+				progressBarHeight, Color.WHITE);
+		progressBar.setFilled(true);
+		screenCanvas.addDynamicDrawable(progressBar);
+		DrawableRectangle progressBarBacker = new DrawableRectangle(screenCenterX - this.progressBarWidth / 2, 50 - progressBarHeight/2, progressBarWidth,
+				progressBarHeight, Color.BLACK);
+		progressBarBacker.setFilled(true);
+		screenCanvas.addStaticDrawable(progressBarBacker);
+		
+		
+	}
+
 	private void setupStreak() {
 		streakValue = new JLabel("500");
 		streakLabel = new JLabel(NOTE_STREAK);
@@ -277,9 +295,19 @@ public class GameScreenController extends ScreenController {
 				displayStreak();
 			}
 		};
+    
+    TimerTask updateSongPosition = new TimerTask() {
+			@Override
+			public void run() {
+				double percent = (double)gameSongPlayer.getClipTime()/(double)gameSongPlayer.getClipLength();
+				progressBar.width = (int) (percent * progressBarWidth);
+				//System.out.println("hi! " + progressBar.width);
+			}
+		};
 
-		ScheduledExecutorService miscTimer = Executors.newScheduledThreadPool(1);
+		ScheduledExecutorService miscTimer = Executors.newScheduledThreadPool(2);
 		miscTimer.scheduleAtFixedRate(ttStreak, 0, 100, TimeUnit.MILLISECONDS);
+    miscTimer.scheduleAtFixedRate(updateSongPosition, 0, 15, TimeUnit.MILLISECONDS);
 	}
 	
 	private void displayStreak() {
@@ -430,7 +458,7 @@ public class GameScreenController extends ScreenController {
 			}
 		};
 
-		winLossScheduler = Executors.newScheduledThreadPool(2);
+		winLossScheduler = Executors.newScheduledThreadPool(3);
 		winLossScheduler.scheduleAtFixedRate(checkHPLoss, 0, 100, TimeUnit.MILLISECONDS);
 		winLossScheduler.schedule(endOfSongWin, gameSongPlayer.getClipLength() + 
 							currentSong.getDelay() * 1000 + 2000000, TimeUnit.MICROSECONDS);
@@ -440,6 +468,7 @@ public class GameScreenController extends ScreenController {
 		markerScheduler.shutdown();
 		winLossScheduler.shutdown();
 		hitDetect.shutdown();
+		songPositionScheduler.shutdown();
 		
 		int timeSurvived = Math.floorDiv(gameSongPlayer.getClipTime(), 1000000);
 		gameSongPlayer.stopClip();
@@ -455,6 +484,7 @@ public class GameScreenController extends ScreenController {
 		markerScheduler.shutdown();
 		winLossScheduler.shutdown();
 		hitDetect.shutdown();
+		songPositionScheduler.shutdown();
 		
 		gameSongPlayer.stopClip();
 		JOptionPane.showMessageDialog(screenCanvas, "You won! \nYou scored " + playerStatus.getScore(),
