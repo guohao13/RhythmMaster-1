@@ -29,25 +29,9 @@ public abstract class ScreenController extends Observable {
 	}
 	
 	private void setupBGM() {
-		if(soundPlayers.size() > 0)
-			soundPlayers.remove(0);
 		if(screenMusicPath != "") {
 			SoundPlayer BGM = new SoundPlayer();
-			if(ApplicationManager.SELECTION == 0) {
-				BGM.playClip(screenMusicPath, SoundPlayer.LOOP_CONTINUOUSLY);
-			}
-			else {
-				TimerTask delayed = new TimerTask() {
-
-					@Override
-					public void run() {
-						BGM.playClip(screenMusicPath, SoundPlayer.LOOP_CONTINUOUSLY);
-					}
-					
-				};
-				Timer t = new Timer();
-				t.schedule(delayed, 2500);
-			}
+			BGM.playClip(screenMusicPath, SoundPlayer.LOOP_CONTINUOUSLY);
 			soundPlayers.add(BGM);
 		}
 	}
@@ -72,7 +56,6 @@ public abstract class ScreenController extends Observable {
 	}
 	
 	public void exitAction(Screen desiredScreen) {
-		System.out.println("exitaction");
 		stopSounds();
 		screenCanvas.removeButtonListeners();
 	}

@@ -71,34 +71,47 @@ public class GameScreenController extends ScreenController {
 	
 	private void setupMarkerTimer() {
 		markerIndex = 0;
+		TimerTask ttMarkerSpawn, ttMarkerPos;
 		
-		TimerTask markerSpawn = new TimerTask() {
+		ttMarkerSpawn = new TimerTask() {
 			@Override
 			public void run() {
-				spawnMarkers();
-				markerIndex++;
+				try {
+					spawnMarkers();
+					markerIndex++;
+				} catch (Exception e) {
+					e.printStackTrace();
+					System.out.println("ttMarkerPos crash");
+				}
+				
 			}
 		};
 		
-		TimerTask markerPos = new TimerTask() {
+
+		ttMarkerPos = new TimerTask() {
 			@Override
 			public void run() {
-				Marker m;
-				for(int x = 0; x < markers.size(); x++) {
-					m = markers.get(x);
-					m.setLocation(m.x, m.y + dy);
-					if (m.getY() > 720) {
-						markers.remove(m);
-						screenCanvas.removeMarker(m);
+				try {
+					Marker m;
+					for(int x = 0; x < markers.size(); x++) {
+						m = markers.get(x);
+						m.setLocation(m.x, m.y + dy);
+						if (m.getY() > 720) {
+							markers.remove(m);
+							screenCanvas.removeMarker(m);
+						}
 					}
+					screenCanvas.repaint();
+				} catch (Throwable t) {
+					t.printStackTrace();
+					System.out.println("ttMarkerPos crash");
 				}
-				screenCanvas.repaint();
 			}
 		};
 
 		markerScheduler = Executors.newScheduledThreadPool(2);
-		markerScheduler.scheduleAtFixedRate(markerSpawn, 0, MARKER_SPAWN_RATE, TimeUnit.MICROSECONDS);
-		markerScheduler.scheduleAtFixedRate(markerPos, 0, 10, TimeUnit.MILLISECONDS);
+		markerScheduler.scheduleAtFixedRate(ttMarkerSpawn, 0, MARKER_SPAWN_RATE, TimeUnit.MICROSECONDS);
+		markerScheduler.scheduleAtFixedRate(ttMarkerPos, 0, 10, TimeUnit.MILLISECONDS);
 	}
 	
 	private void spawnMarkers() {
@@ -108,22 +121,22 @@ public class GameScreenController extends ScreenController {
 		for(int index = 0; index < 4; index++) {
 			if(beats[index]) {
 				switch(index) {
-					case 0: temp = new Marker(rail1x, railTop, 0);
+					case 0: temp = new Marker(rail1x + 2, railTop, 0);
 						markers.add(temp);
 						screenCanvas.addDynamicDrawable(temp);
 						temp.addObserver(hitDetectionObserver);
 						break;
-					case 1: temp = new Marker(rail2x, railTop, 1);
+					case 1: temp = new Marker(rail2x + 2, railTop, 1);
 						markers.add(temp);
 						screenCanvas.addDynamicDrawable(temp);
 						temp.addObserver(hitDetectionObserver);
 						break;
-					case 2: temp = new Marker(rail3x, railTop, 2);
+					case 2: temp = new Marker(rail3x + 2, railTop, 2);
 						markers.add(temp);
 						screenCanvas.addDynamicDrawable(temp);
 						temp.addObserver(hitDetectionObserver);
 						break;
-					case 3: temp = new Marker(rail4x, railTop, 3);
+					case 3: temp = new Marker(rail4x +2, railTop, 3);
 						markers.add(temp);
 						screenCanvas.addDynamicDrawable(temp);
 						temp.addObserver(hitDetectionObserver);
@@ -141,6 +154,7 @@ public class GameScreenController extends ScreenController {
 		setupHitBar();
 		setupText();
 		setupStatusLabels();
+		setupKeyLabels();
 		
 		return screenCanvas;
 	}
@@ -156,6 +170,8 @@ public class GameScreenController extends ScreenController {
 			hpLabel = new JLabel("1.0");
 			scoreLabel.setFont(font);
 			hpLabel.setFont(font);
+			hpLabel.setForeground(Color.WHITE);
+			scoreLabel.setForeground(Color.WHITE);
 			scoreLabel.setBounds(100, 550, 100, 100);
 			hpLabel.setBounds(100, 100, 100, 100);
 			screenCanvas.add(scoreLabel);
@@ -163,8 +179,6 @@ public class GameScreenController extends ScreenController {
 		} catch (FontFormatException  | IOException e) {
 			e.printStackTrace();		
 		}
-		
-		
 	}
 
 	private void setupText() {			
@@ -183,6 +197,38 @@ public class GameScreenController extends ScreenController {
 		scoreButton.setContentAreaFilled(false);		
 		scoreButton.setBorderPainted(false);		
 		screenCanvas.addButton(scoreButton);		
+	}
+	
+	private void setupKeyLabels() {
+		Font font;
+		try {
+			font = Font.createFont(Font.TRUETYPE_FONT, getClass().getResource("../Fonts/ARDESTINE.TTF").openStream());
+			GraphicsEnvironment graphicsEnvironment = GraphicsEnvironment.getLocalGraphicsEnvironment();
+			graphicsEnvironment.registerFont(font);
+			font = font.deriveFont(32f);
+			JLabel jlRail0 = new JLabel("1");			
+			JLabel jlRail1 = new JLabel("2");
+			JLabel jlRail2 = new JLabel("3");
+			JLabel jlRail3 = new JLabel("4");
+			jlRail0.setFont(font);
+			jlRail1.setFont(font);
+			jlRail2.setFont(font);
+			jlRail3.setFont(font);
+			jlRail0.setBounds(rail1x, 560 - hitBarHeight/2, 50, 50);
+			jlRail1.setBounds(rail2x-5, 560 - hitBarHeight/2, 50, 50);
+			jlRail2.setBounds(rail3x-5, 560 - hitBarHeight/2, 50, 50);
+			jlRail3.setBounds(rail4x-5, 560 - hitBarHeight/2, 50, 50);
+			jlRail0.setForeground(Color.WHITE);
+			jlRail1.setForeground(Color.WHITE);
+			jlRail2.setForeground(Color.WHITE);
+			jlRail3.setForeground(Color.WHITE);
+			screenCanvas.add(jlRail0);
+			screenCanvas.add(jlRail1);
+			screenCanvas.add(jlRail2);
+			screenCanvas.add(jlRail3);
+		} catch (FontFormatException  | IOException e) {
+			e.printStackTrace();		
+		}
 	}
   
 	private void setupRails() {	
@@ -287,7 +333,6 @@ public class GameScreenController extends ScreenController {
 	public void handleKeyPressed (int railNumber) {
 		hitDetectionObserver.registerKeypress(railNumber);
 		flashHitBarColor();
-		System.out.println("Key for rail " + railNumber + " pressed");
 	}
 
 	public int getCurrentBeat() {
@@ -319,26 +364,35 @@ public class GameScreenController extends ScreenController {
 		TimerTask checkHPLoss = new TimerTask() {
 			@Override
 			public void run() {
-				int score = playerStatus.getScore();
-				float hp = playerStatus.getHP();
-				scoreLabel.setText(String.valueOf(score));
-				hpLabel.setText(String.valueOf(hp));
-				if (playerStatus.getHP() < MINIMUM_HP)
-					handleLoss();
+				try {
+					int score = playerStatus.getScore();
+					float hp = playerStatus.getHP();
+					scoreLabel.setText(String.valueOf(score));
+					hpLabel.setText(String.valueOf(hp));
+					if (playerStatus.getHP() < MINIMUM_HP)
+						handleLoss();
+				} catch (Exception e) {
+					e.printStackTrace();
+					System.out.println("checkHPLoss exception");
+				}
 			}
 		};
 
 		TimerTask endOfSongWin = new TimerTask() {
 			@Override
 			public void run() {
-				handleWin();
+				try {
+					handleWin();
+				} catch (Exception e) {
+					e.printStackTrace();
+					System.out.println("endOfSongWin exception");
+				}
 			}
 		};
 
 		winLossScheduler = Executors.newScheduledThreadPool(2);
 		winLossScheduler.scheduleAtFixedRate(checkHPLoss, 0, 100, TimeUnit.MILLISECONDS);
-		//winLossScheduler.schedule(endOfSongWin, Math.floorDiv(gameSongPlayer.getClipLength(), 1000) + 2500, TimeUnit.MILLISECONDS);
-		winLossScheduler.schedule(endOfSongWin, gameSongPlayer.getClipLength() + currentSong.getDelay() * 1000, TimeUnit.MICROSECONDS);
+		winLossScheduler.schedule(endOfSongWin, gameSongPlayer.getClipLength() + currentSong.getDelay() * 1000 + 2000000, TimeUnit.MICROSECONDS);
 
 		/*
 		TimerTask beat = new TimerTask() {
@@ -375,7 +429,7 @@ public class GameScreenController extends ScreenController {
 	}
 
 	private void handleWin() {
-		markerScheduler.isShutdown();
+		markerScheduler.shutdown();
 		winLossScheduler.shutdown();
 		hitDetect.shutdown();
 		

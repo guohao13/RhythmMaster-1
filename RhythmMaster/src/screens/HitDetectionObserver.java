@@ -31,7 +31,7 @@ public class HitDetectionObserver implements Observer {
 		else {
 			if(rail.remove(m)) {
 				m.y_coord.deleteObservers();
-				parent.playerStatus.updateStatus(false);
+				//parent.playerStatus.updateStatus(false);
 				System.out.println("      MISS-no keypress on rail " + railIndex);
 			}
 		}
@@ -53,7 +53,7 @@ public class HitDetectionObserver implements Observer {
 		}
 		else {
 			System.out.println("MISS on rail " + railIndex);
-			parent.playerStatus.updateStatus(false);
+			//parent.playerStatus.updateStatus(false);
 			return false;
 		}
 	}
