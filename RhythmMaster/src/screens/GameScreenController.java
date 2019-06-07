@@ -1,6 +1,7 @@
 package screens;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontFormatException;
 import java.awt.GraphicsEnvironment;
@@ -9,6 +10,7 @@ import java.awt.event.ActionEvent;
 import java.io.IOException;
 
 import java.util.ArrayList;
+import java.util.Timer;
 import java.awt.event.KeyEvent;
 import java.util.TimerTask;
 import java.util.concurrent.Executors;
@@ -46,6 +48,7 @@ public class GameScreenController extends ScreenController {
 	final int rail3x = screenCenterX + railSpacing / 2 - railWidth / 2;
 	final int rail4x = screenCenterX + railSpacing * 3 / 2 - railWidth / 2;
 	final int dy = 2;
+	final String NOTE_STREAK = "<html>note<br/>streak!</html>";
 	
 	int markerIndex;
 	DrawableRectangle hitBar;
@@ -53,11 +56,13 @@ public class GameScreenController extends ScreenController {
 	
 	SoundPlayer gameSongPlayer;
 	Song currentSong;
-	Status playerStatus;
+	Status playerStatus = new Status();
 	HitDetectionObserver hitDetectionObserver;
 	ScheduledExecutorService winLossScheduler;
 	ScheduledExecutorService markerScheduler;
 	ScheduledExecutorService hitDetect;
+	JLabel streakValue;
+	JLabel streakLabel;
 	JLabel scoreLabel;
 	JLabel hpLabel;
 	
@@ -71,6 +76,8 @@ public class GameScreenController extends ScreenController {
 		playGameSong(ApplicationManager.SELECTION);
 		setupMarkerTimer();
 		setupWinLossTimer();
+		setupStreak();
+		setupMiscTimers();
 	}
 	
 	private void setupMarkerTimer() {
@@ -155,12 +162,44 @@ public class GameScreenController extends ScreenController {
 		setupRails();
 		setupHitBar();
 		setupText();
+		
+		streakValue = new JLabel("   ");
+		streakValue.setMinimumSize(new Dimension(30, 30));
+		streakLabel = new JLabel("                            ");
+		streakLabel.setMinimumSize(new Dimension(40, 60));
 		setupStatusLabels();
 		setupKeyLabels();
 		
 		return screenCanvas;
 	}
 	
+	private void setupStreak() {
+		streakValue = new JLabel("500");
+		streakLabel = new JLabel(NOTE_STREAK);
+		
+		Font font = null;
+		try {
+			font = Font.createFont(Font.TRUETYPE_FONT, getClass().getResource("../Fonts/ARDESTINE.TTF").openStream());
+			GraphicsEnvironment graphicsEnvironment = GraphicsEnvironment.getLocalGraphicsEnvironment();
+			graphicsEnvironment.registerFont(font);
+			font = font.deriveFont(32f);
+		} catch (FontFormatException | IOException e) {
+			e.printStackTrace();
+			System.out.println("error loading font");
+		}
+		if(font != null) {
+			streakValue.setFont(font);
+			streakLabel.setFont(font);
+			streakValue.setBounds(150, 335, 100, 30);
+			streakLabel.setBounds(200, 310, 150, 80);
+			screenCanvas.add(streakValue);
+			screenCanvas.add(streakLabel);
+		}
+	}
+	
+	/**
+	 * 
+	 */
 	private void setupStatusLabels() {
 		Font font;
 		
@@ -173,8 +212,8 @@ public class GameScreenController extends ScreenController {
 			hpLabel = new JLabel("1.0");
 			scoreLabel.setFont(font);
 			hpLabel.setFont(font);
-			scoreLabel.setBounds(100, 550, 100, 100);
-			hpLabel.setBounds(100, 100, 100, 100);
+			scoreLabel.setBounds(275, 400, 100, 100);
+			hpLabel.setBounds(275, 200, 100, 100);
 			screenCanvas.add(scoreLabel);
 			screenCanvas.add(hpLabel);
 		} catch (FontFormatException  | IOException e) {
@@ -185,19 +224,17 @@ public class GameScreenController extends ScreenController {
 	private void setupText() {			
 		ImageIcon healthIcon = new ImageIcon(Main.class.getResource("../Images/componentImages/Game-Health.png"));		
 		JButton healthButton = new JButton(healthIcon);		
-		healthButton.setBounds(ApplicationManager.SCREEN_WIDTH / 32, ApplicationManager.SCREEN_HEIGHT/8-healthIcon.getIconHeight()/2,		
-				healthIcon.getIconWidth(), healthIcon.getIconHeight());		
+		healthButton.setBounds(100, 223, healthIcon.getIconWidth(), healthIcon.getIconHeight());
 		healthButton.setContentAreaFilled(false);		
 		healthButton.setBorderPainted(false);		
 		screenCanvas.addButton(healthButton);		
 				
 		ImageIcon scoreIcon = new ImageIcon(Main.class.getResource("../Images/componentImages/Game-Score.png"));		
-		JButton scoreButton = new JButton(scoreIcon);		
-		scoreButton.setBounds(ApplicationManager.SCREEN_WIDTH / 32, ApplicationManager.SCREEN_HEIGHT*6/8-scoreIcon.getIconHeight()/2,		
-				scoreIcon.getIconWidth(), scoreIcon.getIconHeight());		
+		JButton scoreButton = new JButton(scoreIcon);
+		scoreButton.setBounds(100, 427, scoreIcon.getIconWidth(), scoreIcon.getIconHeight());
 		scoreButton.setContentAreaFilled(false);		
 		scoreButton.setBorderPainted(false);		
-		screenCanvas.addButton(scoreButton);		
+		screenCanvas.addButton(scoreButton);
 	}
 	
 	private void setupKeyLabels() {
@@ -230,6 +267,30 @@ public class GameScreenController extends ScreenController {
 			screenCanvas.add(jlRail3);
 		} catch (FontFormatException  | IOException e) {
 			e.printStackTrace();		
+		}
+	}
+	
+	private void setupMiscTimers() {
+		TimerTask ttStreak = new TimerTask( ) {
+			@Override
+			public void run() {
+				displayStreak();
+			}
+		};
+
+		ScheduledExecutorService miscTimer = Executors.newScheduledThreadPool(1);
+		miscTimer.scheduleAtFixedRate(ttStreak, 0, 100, TimeUnit.MILLISECONDS);
+	}
+	
+	private void displayStreak() {
+		int currStreak = playerStatus.getCurrentStreak();
+		if(currStreak < 5) {
+			streakValue.setText("");
+			streakLabel.setText("");
+		}
+		else {
+			streakLabel.setText(NOTE_STREAK);
+			streakValue.setText(Integer.toString(currStreak));
 		}
 	}
   
@@ -278,7 +339,6 @@ public class GameScreenController extends ScreenController {
 				}
 				hitBar.setColor(Color.BLACK);
 			}
-
 		});
 		t.start();
 	}
@@ -339,7 +399,7 @@ public class GameScreenController extends ScreenController {
 	}
 
 	private void setupWinLossTimer() {
-		playerStatus = new Status();
+		//playerStatus = new Status();
 
 		TimerTask checkHPLoss = new TimerTask() {
 			@Override
