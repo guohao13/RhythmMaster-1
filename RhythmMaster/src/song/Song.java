@@ -13,10 +13,10 @@ import screens.Main;
 public class Song {
 	private String songName;
 	private Scanner fileScanner;
-	private int msPerBeat = 0;
-	private int lengthInTicks;
+	private int microsecPerBeat = 0;
+	private int delay = 0;
+	private int lengthInTicks = 0;
 	private BeatMap beatMap;
-	private ArrayList<ArrayDeque<Integer>> timeMap;
 	private static final String[] SONG_PATHS = {
 				"../levels/butterfly.txt",
 				"../levels/wiimenu.txt" 		};
@@ -44,7 +44,8 @@ public class Song {
 			}
 			
 			songName = fileScanner.nextLine();
-			msPerBeat = Integer.parseInt(fileScanner.nextLine());
+			microsecPerBeat = Integer.parseInt(fileScanner.nextLine());
+			delay = Integer.parseInt(fileScanner.nextLine());
 			lengthInTicks = Integer.parseInt(fileScanner.nextLine());
 					
 			boolean[][] railData = new boolean[4][lengthInTicks];
@@ -67,16 +68,16 @@ public class Song {
 	}
 
 	public int getMSPerBeat() {
-		return msPerBeat;
+		return microsecPerBeat;
 	}
 	
-	public ArrayList<ArrayDeque<Integer>> getTimeMap() {
-		return timeMap;
+	public int getDelay() {
+		return delay;
 	}
-	
+
 	public void print() {
 		System.out.println("Song name: " + this.songName);
-		System.out.println("ms/beat: " + this.msPerBeat);
+		System.out.println("ms/beat: " + this.microsecPerBeat);
 		beatMap.print();
 	}
 

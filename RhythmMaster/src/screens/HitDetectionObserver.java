@@ -37,7 +37,7 @@ public class HitDetectionObserver implements Observer {
 		}
 	}
 	
-	synchronized public boolean registerKeypress(int railIndex) {
+	public boolean registerKeypress(int railIndex) {
 		ArrayList<Marker> rail = markersInHitbar[railIndex];
 		
 		if(rail.size() > 0) {
@@ -45,8 +45,11 @@ public class HitDetectionObserver implements Observer {
 			rail.remove(0);
 			System.out.println("HIT on rail " + railIndex);
 			parent.playerStatus.updateStatus(true);
-			canvas.removeMarker(m);	// stop displaying hit marker
-			return true;
+			synchronized(canvas.getDynamicList()) {
+				canvas.removeMarker(m);	// stop displaying hit marker
+				return true;
+			}
+			
 		}
 		else {
 			System.out.println("MISS on rail " + railIndex);

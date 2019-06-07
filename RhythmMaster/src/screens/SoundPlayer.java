@@ -29,9 +29,16 @@ public class SoundPlayer {
 		playClip(path);
 	}
 	
-	public SoundPlayer(String path, boolean delay) {
+	public SoundPlayer(String path, int delay) {
+		stopClip();
 		audioIn = null;
 		currClip = null;
+		
+		
+		playClip(path, 0);
+		stopClip();
+		currClip.setMicrosecondPosition(0);
+		
 		Timer t = new Timer();
 		TimerTask delayPlay = new TimerTask() {
 			@Override
@@ -39,7 +46,7 @@ public class SoundPlayer {
 				playClip(path, 0);
 			}
 		};
-		t.schedule(delayPlay, 2500);		
+		t.schedule(delayPlay, delay);		
 	}
 	
 	

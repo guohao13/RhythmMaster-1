@@ -12,6 +12,9 @@ import java.util.ArrayList;
 import java.awt.event.KeyEvent;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import javax.swing.AbstractAction;
 import javax.swing.ActionMap;
@@ -43,14 +46,13 @@ public class GameScreenController extends ScreenController {
 	int markerIndex = 0;
 	DrawableRectangle hitBar;
 	ArrayList<Marker> markers = new ArrayList<Marker>();
-	Timer screenTimer;
-	Timer winLossTimer;
 	JLabel hpLabel;
 	JLabel scoreLabel;
 	Status playerStatus;
 	SoundPlayer gameSongPlayer;
 	Song currentSong;
 	HitDetectionObserver hitDetectionObserver;
+	ScheduledExecutorService markerScheduler, winLossScheduler, hitDetect;
 	static final float MINIMUM_HP = 0.5f;
 
 	static int MARKER_SPAWN_RATE;
@@ -59,14 +61,12 @@ public class GameScreenController extends ScreenController {
 		screenType = Screen.GAME;
 		screenMusicPath = "";
 		screenBackgroundPath = "../Images/backgroundImages/background-Game.png";
-		screenTimer = new Timer();
 		setupDisplayAndMusic();
 		setupKeys();
 		setupSongAndMissedNoteObs();
 		playGameSong(ApplicationManager.SELECTION);
 		setupMarkerTimer();
 		setupWinLossTimer();
-		
 	}
 	
 	private void setupMarkerTimer() {
@@ -95,8 +95,10 @@ public class GameScreenController extends ScreenController {
 				screenCanvas.repaint();
 			}
 		};
-		screenTimer.scheduleAtFixedRate(markerSpawn, 0, MARKER_SPAWN_RATE);
-		screenTimer.scheduleAtFixedRate(markerPos, 0, 10);
+
+		markerScheduler = Executors.newScheduledThreadPool(2);
+		markerScheduler.scheduleAtFixedRate(markerSpawn, 0, MARKER_SPAWN_RATE, TimeUnit.MICROSECONDS);
+		markerScheduler.scheduleAtFixedRate(markerPos, 0, 10, TimeUnit.MILLISECONDS);
 	}
 	
 	private void spawnMarkers() {
@@ -150,8 +152,8 @@ public class GameScreenController extends ScreenController {
 			GraphicsEnvironment graphicsEnvironment = GraphicsEnvironment.getLocalGraphicsEnvironment();
 			graphicsEnvironment.registerFont(font);
 			font = font.deriveFont(32f);
-			scoreLabel = new JLabel("score label not set");			
-			hpLabel = new JLabel("hp label not set");
+			scoreLabel = new JLabel("0");			
+			hpLabel = new JLabel("1.0");
 			scoreLabel.setFont(font);
 			hpLabel.setFont(font);
 			scoreLabel.setBounds(100, 550, 100, 100);
@@ -305,7 +307,10 @@ public class GameScreenController extends ScreenController {
 
 	private void playGameSong(int selection) {
 		System.out.println("play game song");
-		gameSongPlayer = new SoundPlayer(ApplicationManager.SONG_OPTIONS[selection]);
+		if(currentSong.getDelay() == 0)
+			gameSongPlayer = new SoundPlayer(ApplicationManager.SONG_OPTIONS[selection]);
+		else
+			gameSongPlayer = new SoundPlayer(ApplicationManager.SONG_OPTIONS[selection], currentSong.getDelay());
 	}
 
 	private void setupWinLossTimer() {
@@ -330,10 +335,12 @@ public class GameScreenController extends ScreenController {
 			}
 		};
 
-		winLossTimer = new Timer("winLossTimer");
-		winLossTimer.scheduleAtFixedRate(checkHPLoss, 0, 100);
-		winLossTimer.schedule(endOfSongWin, Math.floorDiv(gameSongPlayer.getClipLength(), 1000) + 2500);
-		
+		winLossScheduler = Executors.newScheduledThreadPool(2);
+		winLossScheduler.scheduleAtFixedRate(checkHPLoss, 0, 100, TimeUnit.MILLISECONDS);
+		//winLossScheduler.schedule(endOfSongWin, Math.floorDiv(gameSongPlayer.getClipLength(), 1000) + 2500, TimeUnit.MILLISECONDS);
+		winLossScheduler.schedule(endOfSongWin, gameSongPlayer.getClipLength() + currentSong.getDelay() * 1000, TimeUnit.MICROSECONDS);
+
+		/*
 		TimerTask beat = new TimerTask() {
 			int time = 0;
 			
@@ -342,36 +349,56 @@ public class GameScreenController extends ScreenController {
 				time++;
 			}
 		};
-		screenTimer.scheduleAtFixedRate(beat, 0, MARKER_SPAWN_RATE);
+		if(ApplicationManager.SELECTION == 0) {
+			screenTimer.scheduleAtFixedRate(beat, 0, MARKER_SPAWN_RATE);
+		}
+		else {
+			System.out.println("chose wii");
+			markerScheduler.scheduleAtFixedRate(beat, 2500, MARKER_SPAWN_RATE);
+		}
+		*/
 	}
 
 	private void handleLoss() {
-		winLossTimer.cancel();
-		screenTimer.cancel();
-		for(Marker m : markers)
-			m.y_coord.deleteObserver(hitDetectionObserver);
+		markerScheduler.shutdown();
+		winLossScheduler.shutdown();
+		hitDetect.shutdown();
+		
 		int timeSurvived = Math.floorDiv(gameSongPlayer.getClipTime(), 1000000);
 		gameSongPlayer.stopClip();
 		JOptionPane.showMessageDialog(screenCanvas,
 				"You lost \nYour hit percent was too low \nBut you survived " + timeSurvived + " seconds!", "Sorry",
 				JOptionPane.WARNING_MESSAGE);
+		for(Marker m : markers)
+			m.y_coord.deleteObserver(hitDetectionObserver);
 		requestScreenChangeTo(Screen.MAIN_MENU);
 	}
 
 	private void handleWin() {
-		winLossTimer.cancel();
-		screenTimer.cancel();
-		for(Marker m : markers)
-			m.y_coord.deleteObserver(hitDetectionObserver);
+		markerScheduler.isShutdown();
+		winLossScheduler.shutdown();
+		hitDetect.shutdown();
+		
 		gameSongPlayer.stopClip();
 		JOptionPane.showMessageDialog(screenCanvas, "You won! \nYou scored " + playerStatus.getScore(),
 				"Congratulations!", JOptionPane.WARNING_MESSAGE);
+		for(Marker m : markers)
+			m.y_coord.deleteObserver(hitDetectionObserver);
 		requestScreenChangeTo(Screen.MAIN_MENU);
 	}
 
 	private void setupSongAndMissedNoteObs() {
 		currentSong = new Song(ApplicationManager.SELECTION);
 		MARKER_SPAWN_RATE = currentSong.getMSPerBeat();
-		hitDetectionObserver = new HitDetectionObserver(this, screenCanvas);
+		
+		hitDetect = Executors.newScheduledThreadPool(1);
+		hitDetect.schedule(new Runnable() {
+			@Override
+			public void run() {
+				hitDetectionObserver = new HitDetectionObserver(GameScreenController.this, screenCanvas);
+			}
+		}, 0, TimeUnit.SECONDS);
+		
+		//hitDetectionObserver = new HitDetectionObserver(this, screenCanvas);
 	}
 }

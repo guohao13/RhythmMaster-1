@@ -25,7 +25,7 @@ public class Canvas extends JPanel {
 	}
 	
 	@Override
-	public void paintComponent(Graphics g) {
+	synchronized public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		g.drawImage(background, 0, 0, ApplicationManager.SCREEN_WIDTH, ApplicationManager.SCREEN_HEIGHT, this);
 		for(Drawable s: staticDrawables) {
@@ -54,10 +54,10 @@ public class Canvas extends JPanel {
 		return c;
 	}
 	
-	public ArrayList<Drawable> getDynamicList(){
+	synchronized public ArrayList<Drawable> getDynamicList(){
 		return dynamicDrawables;
 	}
-	public ArrayList<Drawable> getStaticList(){
+	synchronized public ArrayList<Drawable> getStaticList(){
 		return staticDrawables;
 	}
 	
@@ -81,7 +81,7 @@ public class Canvas extends JPanel {
 		}
 	}
 	
-	public void removeMarker(Marker m) {
+	synchronized public void removeMarker(Marker m) {
 		dynamicDrawables.remove(m);
 	}	
 }
