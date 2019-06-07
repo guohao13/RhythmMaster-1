@@ -51,7 +51,7 @@ public class GameScreenController extends ScreenController {
 	final String NOTE_STREAK = "<html>note<br/>streak!</html>";
 	
 	final int progressBarWidth = hitBarWidth;
-	final int progressBarHeight = hitBarHeight/5;
+	final int progressBarHeight = hitBarHeight / 10;
 	
 	int markerIndex;
 	DrawableRectangle hitBar;
@@ -65,6 +65,7 @@ public class GameScreenController extends ScreenController {
 	ScheduledExecutorService winLossScheduler;
 	ScheduledExecutorService markerScheduler;
 	ScheduledExecutorService hitDetect;
+	ScheduledExecutorService miscScheduler;
 	JLabel streakValue;
 	JLabel streakLabel;
 	JLabel scoreLabel;
@@ -179,12 +180,12 @@ public class GameScreenController extends ScreenController {
 	}
 	
 	private void setupProgressBar() {
-		progressBar = new DrawableRectangle(screenCenterX - this.progressBarWidth / 2, 50 - progressBarHeight/2, 0,
-				progressBarHeight, Color.WHITE);
+		progressBar = new DrawableRectangle(screenCenterX - this.progressBarWidth / 2, 50 - progressBarHeight/2 - 20, 
+				0, progressBarHeight, Color.WHITE);
 		progressBar.setFilled(true);
 		screenCanvas.addDynamicDrawable(progressBar);
-		DrawableRectangle progressBarBacker = new DrawableRectangle(screenCenterX - this.progressBarWidth / 2, 50 - progressBarHeight/2, progressBarWidth,
-				progressBarHeight, Color.BLACK);
+		DrawableRectangle progressBarBacker = new DrawableRectangle(screenCenterX - this.progressBarWidth / 2, 50 - progressBarHeight/2 - 20, 
+				progressBarWidth, progressBarHeight, Color.BLACK);
 		progressBarBacker.setFilled(true);
 		screenCanvas.addStaticDrawable(progressBarBacker);
 		
@@ -296,7 +297,7 @@ public class GameScreenController extends ScreenController {
 			}
 		};
     
-    TimerTask updateSongPosition = new TimerTask() {
+		TimerTask updateSongPosition = new TimerTask() {
 			@Override
 			public void run() {
 				double percent = (double)gameSongPlayer.getClipTime()/(double)gameSongPlayer.getClipLength();
@@ -305,9 +306,9 @@ public class GameScreenController extends ScreenController {
 			}
 		};
 
-		ScheduledExecutorService miscTimer = Executors.newScheduledThreadPool(2);
-		miscTimer.scheduleAtFixedRate(ttStreak, 0, 100, TimeUnit.MILLISECONDS);
-    miscTimer.scheduleAtFixedRate(updateSongPosition, 0, 15, TimeUnit.MILLISECONDS);
+		miscScheduler = Executors.newScheduledThreadPool(2);
+		miscScheduler.scheduleAtFixedRate(ttStreak, 0, 100, TimeUnit.MILLISECONDS);
+		miscScheduler.scheduleAtFixedRate(updateSongPosition, 0, 15, TimeUnit.MILLISECONDS);
 	}
 	
 	private void displayStreak() {
@@ -468,7 +469,7 @@ public class GameScreenController extends ScreenController {
 		markerScheduler.shutdown();
 		winLossScheduler.shutdown();
 		hitDetect.shutdown();
-		songPositionScheduler.shutdown();
+		miscScheduler.shutdown();
 		
 		int timeSurvived = Math.floorDiv(gameSongPlayer.getClipTime(), 1000000);
 		gameSongPlayer.stopClip();
@@ -484,7 +485,7 @@ public class GameScreenController extends ScreenController {
 		markerScheduler.shutdown();
 		winLossScheduler.shutdown();
 		hitDetect.shutdown();
-		songPositionScheduler.shutdown();
+		miscScheduler.shutdown();
 		
 		gameSongPlayer.stopClip();
 		JOptionPane.showMessageDialog(screenCanvas, "You won! \nYou scored " + playerStatus.getScore(),
