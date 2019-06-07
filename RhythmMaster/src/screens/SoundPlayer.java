@@ -49,7 +49,6 @@ public class SoundPlayer {
 		t.schedule(delayPlay, delay);		
 	}
 	
-	
 	public void playClip(String path) {
 		playClip(path, 0);
 	}
@@ -76,6 +75,7 @@ public class SoundPlayer {
 			ret = getClipTime();
 			currClip.close();
 		}
+		
 		return ret;
 	}
 	

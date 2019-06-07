@@ -13,9 +13,8 @@ public class HitDetectionObserver implements Observer {
 	HitDetectionObserver(GameScreenController gsc, Canvas c) {
 		this.parent = gsc;
 		this.canvas = c;
-		for(int x = 0; x < 4; x++) {
+		for(int x = 0; x < 4; x++)
 			markersInHitbar[x] = new ArrayList<>();
-		}
 	}
 
 	@Override
@@ -25,14 +24,13 @@ public class HitDetectionObserver implements Observer {
 		ArrayList<Marker> rail = markersInHitbar[railIndex];
 		
 		// marker is transitioning INTO hitbar
-		if(m.isInHitbar) {
+		if(m.isInHitbar)
 			rail.add(m);
-		}
 		else {
 			if(rail.remove(m)) {
 				m.y_coord.deleteObservers();
-				//parent.playerStatus.updateStatus(false);
-				System.out.println("      MISS-no keypress on rail " + railIndex);
+				parent.playerStatus.updateStatus(false);
+				System.out.println("MISS-no keypress on rail " + railIndex);
 			}
 		}
 	}
@@ -47,13 +45,14 @@ public class HitDetectionObserver implements Observer {
 			parent.playerStatus.updateStatus(true);
 			synchronized(canvas.getDynamicList()) {
 				canvas.removeMarker(m);	// stop displaying hit marker
+			
 				return true;
 			}
-			
 		}
 		else {
 			System.out.println("MISS on rail " + railIndex);
-			//parent.playerStatus.updateStatus(false);
+			parent.playerStatus.updateStatus(false);
+			
 			return false;
 		}
 	}

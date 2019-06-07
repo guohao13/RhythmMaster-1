@@ -10,7 +10,6 @@ import java.io.IOException;
 
 import java.util.ArrayList;
 import java.awt.event.KeyEvent;
-import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -30,32 +29,37 @@ import song.Song;
 import status.Status;
 
 public class GameScreenController extends ScreenController {
-	int globalYOffset = -20;
-	int screenCenterX = 1280 / 2, 
-			screenCenterY = 680 / 2, 
-			railSpacing = 150, 
-			railWidth = 10, 
-			railHeight = 600,
-			hitBarWidth = 700, hitBarHeight = 50;
-	int railTop = 60, 
-			rail1x = screenCenterX - railSpacing * 3 / 2 - railWidth / 2,
-			rail2x = screenCenterX - railSpacing / 2 - railWidth / 2,
-			rail3x = screenCenterX + railSpacing / 2 - railWidth / 2,
-			rail4x = screenCenterX + railSpacing * 3 / 2 - railWidth / 2;
-	int dy = 2;
-	int markerIndex = 0;
-	DrawableRectangle hitBar;
-	ArrayList<Marker> markers = new ArrayList<Marker>();
-	JLabel hpLabel;
-	JLabel scoreLabel;
-	Status playerStatus;
-	SoundPlayer gameSongPlayer;
-	Song currentSong;
-	HitDetectionObserver hitDetectionObserver;
-	ScheduledExecutorService markerScheduler, winLossScheduler, hitDetect;
 	static final float MINIMUM_HP = 0.5f;
 
 	static int MARKER_SPAWN_RATE;
+	
+	final Color railColor = Color.BLACK;
+	final int railSpacing = 150; 
+	final int railWidth = 10;
+	final int railHeight = 600;
+	final int hitBarWidth = 700;
+	final int hitBarHeight = 50;
+	final int railTop = 60; 
+	final int screenCenterX = ApplicationManager.SCREEN_WIDTH / 2;
+	final int rail1x = screenCenterX - railSpacing * 3 / 2 - railWidth / 2;
+	final int rail2x = screenCenterX - railSpacing / 2 - railWidth / 2;
+	final int rail3x = screenCenterX + railSpacing / 2 - railWidth / 2;
+	final int rail4x = screenCenterX + railSpacing * 3 / 2 - railWidth / 2;
+	final int dy = 2;
+	
+	int markerIndex;
+	DrawableRectangle hitBar;
+	ArrayList<Marker> markers = new ArrayList<Marker>();
+	
+	SoundPlayer gameSongPlayer;
+	Song currentSong;
+	Status playerStatus;
+	HitDetectionObserver hitDetectionObserver;
+	ScheduledExecutorService winLossScheduler;
+	ScheduledExecutorService markerScheduler;
+	ScheduledExecutorService hitDetect;
+	JLabel scoreLabel;
+	JLabel hpLabel;
 	
 	public GameScreenController() {
 		screenType = Screen.GAME;
@@ -81,12 +85,10 @@ public class GameScreenController extends ScreenController {
 					markerIndex++;
 				} catch (Exception e) {
 					e.printStackTrace();
-					System.out.println("ttMarkerPos crash");
+					System.out.println("ttMarkerSpawn crash");
 				}
-				
 			}
 		};
-		
 
 		ttMarkerPos = new TimerTask() {
 			@Override
@@ -116,30 +118,30 @@ public class GameScreenController extends ScreenController {
 	
 	private void spawnMarkers() {
 		boolean[] beats = currentSong.getBitsAt(markerIndex);
-		Marker temp;
+		Marker m;
 				
 		for(int index = 0; index < 4; index++) {
 			if(beats[index]) {
 				switch(index) {
-					case 0: temp = new Marker(rail1x + 2, railTop, 0);
-						markers.add(temp);
-						screenCanvas.addDynamicDrawable(temp);
-						temp.addObserver(hitDetectionObserver);
+					case 0: m = new Marker(rail1x + 2, railTop, 0);
+						markers.add(m);
+						screenCanvas.addDynamicDrawable(m);
+						m.addObserver(hitDetectionObserver);
 						break;
-					case 1: temp = new Marker(rail2x + 2, railTop, 1);
-						markers.add(temp);
-						screenCanvas.addDynamicDrawable(temp);
-						temp.addObserver(hitDetectionObserver);
+					case 1: m = new Marker(rail2x + 2, railTop, 1);
+						markers.add(m);
+						screenCanvas.addDynamicDrawable(m);
+						m.addObserver(hitDetectionObserver);
 						break;
-					case 2: temp = new Marker(rail3x + 2, railTop, 2);
-						markers.add(temp);
-						screenCanvas.addDynamicDrawable(temp);
-						temp.addObserver(hitDetectionObserver);
+					case 2: m = new Marker(rail3x + 2, railTop, 2);
+						markers.add(m);
+						screenCanvas.addDynamicDrawable(m);
+						m.addObserver(hitDetectionObserver);
 						break;
-					case 3: temp = new Marker(rail4x +2, railTop, 3);
-						markers.add(temp);
-						screenCanvas.addDynamicDrawable(temp);
-						temp.addObserver(hitDetectionObserver);
+					case 3: m = new Marker(rail4x +2, railTop, 3);
+						markers.add(m);
+						screenCanvas.addDynamicDrawable(m);
+						m.addObserver(hitDetectionObserver);
 						break;
 				}
 			}
@@ -161,6 +163,7 @@ public class GameScreenController extends ScreenController {
 	
 	private void setupStatusLabels() {
 		Font font;
+		
 		try {
 			font = Font.createFont(Font.TRUETYPE_FONT, getClass().getResource("../Fonts/ARDESTINE.TTF").openStream());
 			GraphicsEnvironment graphicsEnvironment = GraphicsEnvironment.getLocalGraphicsEnvironment();
@@ -170,8 +173,6 @@ public class GameScreenController extends ScreenController {
 			hpLabel = new JLabel("1.0");
 			scoreLabel.setFont(font);
 			hpLabel.setFont(font);
-			hpLabel.setForeground(Color.WHITE);
-			scoreLabel.setForeground(Color.WHITE);
 			scoreLabel.setBounds(100, 550, 100, 100);
 			hpLabel.setBounds(100, 100, 100, 100);
 			screenCanvas.add(scoreLabel);
@@ -201,6 +202,7 @@ public class GameScreenController extends ScreenController {
 	
 	private void setupKeyLabels() {
 		Font font;
+		
 		try {
 			font = Font.createFont(Font.TRUETYPE_FONT, getClass().getResource("../Fonts/ARDESTINE.TTF").openStream());
 			GraphicsEnvironment graphicsEnvironment = GraphicsEnvironment.getLocalGraphicsEnvironment();
@@ -214,10 +216,10 @@ public class GameScreenController extends ScreenController {
 			jlRail1.setFont(font);
 			jlRail2.setFont(font);
 			jlRail3.setFont(font);
-			jlRail0.setBounds(rail1x, 560 - hitBarHeight/2, 50, 50);
-			jlRail1.setBounds(rail2x-5, 560 - hitBarHeight/2, 50, 50);
-			jlRail2.setBounds(rail3x-5, 560 - hitBarHeight/2, 50, 50);
-			jlRail3.setBounds(rail4x-5, 560 - hitBarHeight/2, 50, 50);
+			jlRail0.setBounds(rail1x - 3, 560 - hitBarHeight / 2, 50, 50);
+			jlRail1.setBounds(rail2x - 5, 560 - hitBarHeight / 2, 50, 50);
+			jlRail2.setBounds(rail3x - 5, 560 - hitBarHeight / 2, 50, 50);
+			jlRail3.setBounds(rail4x - 5, 560 - hitBarHeight / 2, 50, 50);
 			jlRail0.setForeground(Color.WHITE);
 			jlRail1.setForeground(Color.WHITE);
 			jlRail2.setForeground(Color.WHITE);
@@ -232,8 +234,8 @@ public class GameScreenController extends ScreenController {
 	}
   
 	private void setupRails() {	
-		Color railColor = Color.BLACK;
 		System.out.println("setting up rails!" + screenCenterX + " ");
+		
 		DrawableRectangle rail1 = new DrawableRectangle(screenCenterX - railSpacing * 3 / 2 - railWidth / 2,
 				60, railWidth, railHeight, railColor);
 		rail1.setFilled(true);
@@ -265,19 +267,16 @@ public class GameScreenController extends ScreenController {
 	}
 
 	public void flashHitBarColor() {
-
 		Thread t = new Thread(new Runnable() {
-
 			@Override
 			public void run() {
-				hitBar.c = Color.GREEN;
+				hitBar.setColor(Color.GREEN);
 				try {
 					Thread.sleep(100);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
-				hitBar.c = Color.BLACK;
-
+				hitBar.setColor(Color.BLACK);
 			}
 
 		});
@@ -289,20 +288,15 @@ public class GameScreenController extends ScreenController {
 		int focusCondition = JComponent.WHEN_IN_FOCUSED_WINDOW;
 		InputMap inputMap = screenCanvas.getInputMap(focusCondition);
 
-		String railZero = "RAIL_ZERO";
-		String railOne = "RAIL_ONE";
-		String railTwo = "RAIL_TWO";
-		String railThree = "RAIL_THREE";
+		inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_1, 0), "RAIL_ZERO");
+		inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_2, 0), "RAIL_ONE");
+		inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_3, 0), "RAIL_TWO");
+		inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_4, 0), "RAIL_THREE");
 
-		inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_1, 0), railZero);
-		inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_2, 0), railOne);
-		inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_3, 0), railTwo);
-		inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_4, 0), railThree);
-
-		actionMap.put(railZero, new KeyAction(railZero));
-		actionMap.put(railOne, new KeyAction(railOne));
-		actionMap.put(railTwo, new KeyAction(railTwo));
-		actionMap.put(railThree, new KeyAction(railThree));
+		actionMap.put("RAIL_ZERO", new KeyAction("RAIL_ZERO"));
+		actionMap.put("RAIL_ONE", new KeyAction("RAIL_ONE"));
+		actionMap.put("RAIL_TWO", new KeyAction("RAIL_TWO"));
+		actionMap.put("RAIL_THREE", new KeyAction("RAIL_THREE"));
 	}
 
 	private class KeyAction extends AbstractAction {
@@ -330,28 +324,14 @@ public class GameScreenController extends ScreenController {
 		}
 	}
 	
-	public void handleKeyPressed (int railNumber) {
-		hitDetectionObserver.registerKeypress(railNumber);
+	public void handleKeyPressed (int railIndex) {
+		hitDetectionObserver.registerKeypress(railIndex);
 		flashHitBarColor();
-	}
-
-	public int getCurrentBeat() {
-		if (gameSongPlayer.isPlaying())
-			return timeToBeat(gameSongPlayer.getClipTime());
-		else
-			return -1;
-	}
-
-	private int timeToBeat(int clipTime) {
-		return ((int)Math.floorDiv((long)clipTime, ( 1000 * currentSong.getMSPerBeat())));
-	}
-
-	private int beatToTime(int beatIndex) {
-		return beatIndex * currentSong.getMSPerBeat() * 1000;
 	}
 
 	private void playGameSong(int selection) {
 		System.out.println("play game song");
+		
 		if(currentSong.getDelay() == 0)
 			gameSongPlayer = new SoundPlayer(ApplicationManager.SONG_OPTIONS[selection]);
 		else
@@ -392,25 +372,8 @@ public class GameScreenController extends ScreenController {
 
 		winLossScheduler = Executors.newScheduledThreadPool(2);
 		winLossScheduler.scheduleAtFixedRate(checkHPLoss, 0, 100, TimeUnit.MILLISECONDS);
-		winLossScheduler.schedule(endOfSongWin, gameSongPlayer.getClipLength() + currentSong.getDelay() * 1000 + 2000000, TimeUnit.MICROSECONDS);
-
-		/*
-		TimerTask beat = new TimerTask() {
-			int time = 0;
-			
-			@Override
-			public void run() {
-				time++;
-			}
-		};
-		if(ApplicationManager.SELECTION == 0) {
-			screenTimer.scheduleAtFixedRate(beat, 0, MARKER_SPAWN_RATE);
-		}
-		else {
-			System.out.println("chose wii");
-			markerScheduler.scheduleAtFixedRate(beat, 2500, MARKER_SPAWN_RATE);
-		}
-		*/
+		winLossScheduler.schedule(endOfSongWin, gameSongPlayer.getClipLength() + 
+							currentSong.getDelay() * 1000 + 2000000, TimeUnit.MICROSECONDS);
 	}
 
 	private void handleLoss() {
@@ -443,7 +406,7 @@ public class GameScreenController extends ScreenController {
 
 	private void setupSongAndMissedNoteObs() {
 		currentSong = new Song(ApplicationManager.SELECTION);
-		MARKER_SPAWN_RATE = currentSong.getMSPerBeat();
+		MARKER_SPAWN_RATE = currentSong.getMicroSecPerBeat();
 		
 		hitDetect = Executors.newScheduledThreadPool(1);
 		hitDetect.schedule(new Runnable() {
@@ -452,7 +415,5 @@ public class GameScreenController extends ScreenController {
 				hitDetectionObserver = new HitDetectionObserver(GameScreenController.this, screenCanvas);
 			}
 		}, 0, TimeUnit.SECONDS);
-		
-		//hitDetectionObserver = new HitDetectionObserver(this, screenCanvas);
 	}
 }

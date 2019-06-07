@@ -1,7 +1,6 @@
 package screens;
 
 import java.awt.Color;
-import java.awt.Graphics;
 import java.util.Observable;
 
 public class Marker extends DrawableRectangle {
@@ -10,9 +9,6 @@ public class Marker extends DrawableRectangle {
 	private static final int SIDE_LENGTH = 40;
 	private static final int HITBAR_TOP_Y = 560;
 	private static final int HITBAR_BOTTOM_Y = 610;
-	private static final int HITBAR_Y_COORD = 670;
-	private static final int OBSERVER_WINDOW_SIZE = 50;
-	private static final int Y_COORD_STEP_SIZE = 2;			// TODO: Consider deletion
 	private static final Color blue = new Color(0x46, 0x9d, 0xff);
 	private static final Color red = new Color(0xeb, 0x69, 0x6e);
 	private static final Color green = new Color(0x47,0xeb,0x94);
@@ -35,12 +31,8 @@ public class Marker extends DrawableRectangle {
 	@Override
 	public String toString() {
 		String s = "xpos = " + this.x + " ypos = " + this.y;
+		
 		return s;
-	}
-
-	@Override
-	public void draw(Graphics g) {
-		super.draw(g);
 	}
 
 	public int getRailIndex() {
@@ -58,9 +50,11 @@ public class Marker extends DrawableRectangle {
 
 	public class ObservableYCoord extends Observable {
 
+		private static final int TOLERANCE_WINDOW_SIZE = 50;
+		
 		Marker parent;
 		private int y_coord;
-		private final int TOLERANCE_IN_PIXELS = (int) (ApplicationManager.TOLERANCE * (float)50);
+		private final int TOLERANCE_IN_PIXELS = (int) (ApplicationManager.TOLERANCE * (float) TOLERANCE_WINDOW_SIZE);
 		
 		ObservableYCoord(Marker p) {
 			this.parent = p;

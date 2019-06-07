@@ -34,6 +34,6 @@ public class Health {
 		if(sumMovingWindow == 0)
 			return 0;
 		else
-			return ((float)sumMovingWindow / (float)hitHistory.size());
+			return ((float)sumMovingWindow / hitHistory.size());
 	}
 }

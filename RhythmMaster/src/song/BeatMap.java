@@ -1,9 +1,5 @@
 package song;
 
-import java.awt.Color;
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-
 public class BeatMap {
 
 	private Rail[] rails;

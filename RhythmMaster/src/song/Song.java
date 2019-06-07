@@ -2,12 +2,8 @@ package song;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.net.URI;
-import java.util.ArrayDeque;
-import java.util.ArrayList;
 import java.util.Scanner;
 
-import screens.ApplicationManager;
 import screens.Main;
 
 public class Song {
@@ -18,8 +14,8 @@ public class Song {
 	private int lengthInTicks = 0;
 	private BeatMap beatMap;
 	private static final String[] SONG_PATHS = {
-				"../levels/butterfly.txt",
-				"../levels/wiimenu.txt" 		};
+													"../levels/butterfly.txt",
+													"../levels/wiimenu.txt" 	};
 	
 	public Song(int selection) {	
 		processFile(SONG_PATHS[selection]);
@@ -67,18 +63,11 @@ public class Song {
 		return beatMap.getRailBitsAt(index);
 	}
 
-	public int getMSPerBeat() {
+	public int getMicroSecPerBeat() {
 		return microsecPerBeat;
 	}
 	
 	public int getDelay() {
 		return delay;
 	}
-
-	public void print() {
-		System.out.println("Song name: " + this.songName);
-		System.out.println("ms/beat: " + this.microsecPerBeat);
-		beatMap.print();
-	}
-
 }

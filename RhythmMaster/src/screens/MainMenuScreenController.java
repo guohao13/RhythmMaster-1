@@ -15,7 +15,6 @@ public class MainMenuScreenController extends ScreenController {
 		setupDisplayAndMusic();
 	}
 	
-	
 	@Override
 	public Canvas setupCanvas() {
 		screenCanvas = new Canvas();
@@ -25,17 +24,10 @@ public class MainMenuScreenController extends ScreenController {
 	}
 	
 	private void setupButtons() {
-		ImageIcon backIcon = new ImageIcon(Main.class.getResource("../Images/MENU.png"));
-		JButton backButton = new JButton(backIcon);
-		backButton.setBounds(1280/2 - backIcon.getIconWidth()/2, 720/4 - backIcon.getIconHeight()/2, backIcon.getIconWidth(), backIcon.getIconHeight());
-		backButton.setContentAreaFilled(false);
-		backButton.setBorderPainted(false);
-		
-		//screenCanvas.addButton(button);
-		
 		ImageIcon startGameIcon = new ImageIcon(Main.class.getResource("../Images/componentImages/Menu-Select.png"));
 		JButton startGameButton = new JButton(startGameIcon);
-		startGameButton.setBounds(1280/32, 720*5/8 - startGameIcon.getIconHeight()/2, startGameIcon.getIconWidth(), startGameIcon.getIconHeight());
+		startGameButton.setBounds(ApplicationManager.SCREEN_WIDTH / 32, ApplicationManager.SCREEN_HEIGHT * 5/8 
+						- startGameIcon.getIconHeight() / 2, startGameIcon.getIconWidth(), startGameIcon.getIconHeight());
 		startGameButton.setContentAreaFilled(false);
 		startGameButton.setBorderPainted(false);
 		
@@ -57,9 +49,6 @@ public class MainMenuScreenController extends ScreenController {
 				requestScreenChangeTo(Screen.SETTINGS);
 			}
 		});
-		
-		screenCanvas.addButton(settingsButton);
-		
-		
+		screenCanvas.addButton(settingsButton);	
 	}
 }

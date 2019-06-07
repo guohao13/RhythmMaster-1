@@ -3,8 +3,6 @@ package screens;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Observable;
-import java.util.Timer;
-import java.util.TimerTask;
 
 enum Screen
 {

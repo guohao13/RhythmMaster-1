@@ -57,6 +57,7 @@ public class Canvas extends JPanel {
 	synchronized public ArrayList<Drawable> getDynamicList(){
 		return dynamicDrawables;
 	}
+	
 	synchronized public ArrayList<Drawable> getStaticList(){
 		return staticDrawables;
 	}

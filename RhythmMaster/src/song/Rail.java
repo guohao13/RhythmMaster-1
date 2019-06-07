@@ -1,6 +1,5 @@
 package song;
 
-import java.util.ArrayDeque;
 import java.util.BitSet;
 
 public class Rail {

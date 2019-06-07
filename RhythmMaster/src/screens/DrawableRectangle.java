@@ -7,7 +7,7 @@ import java.awt.Rectangle;
 public class DrawableRectangle extends Rectangle implements Drawable {
 	private static final long serialVersionUID = 1L;
 
-	protected Color c;
+	private Color c;
 	protected boolean filled = true;
 	protected boolean center = false;
 
@@ -25,13 +25,8 @@ public class DrawableRectangle extends Rectangle implements Drawable {
 		filled = b;
 	}
 
-	public void drawCentered(boolean b) {
-		center = b;
-	}
-
 	@Override
 	public void draw(Graphics g) {
-		// TODO Auto-generated method stub
 		g.setColor(c);
 		//if we want the rectangle centered, set the x and y coordinates for drawing
 		int drawX = (center) ? x - width / 2 : x;
@@ -47,28 +42,21 @@ public class DrawableRectangle extends Rectangle implements Drawable {
 
 	@Override
 	public void setCenterX(int x) {
-		// TODO Auto-generated method stub
 		this.x = x - this.width/2;
-		
 	}
 
 	@Override
 	public void setCenterY(int y) {
-		// TODO Auto-generated method stub
 		this.y = y - this.height/2;
-		
 	}
 
 	@Override
 	public void setCenter(int x, int y) {
-		// TODO Auto-generated method stub
 		setCenterX(x);
 		setCenterY(y);
-		
 	}
 	
 	public void setColor(Color c) {
 		this.c = c;
 	}
-
 }
