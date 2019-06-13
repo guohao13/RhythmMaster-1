@@ -9,6 +9,7 @@ public final class DisplayManager extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private Canvas canvas;
 
+	// creates the frame and draws the canvas
    public DisplayManager() {
       canvas = new Canvas();
       canvas.setPreferredSize(new Dimension(ApplicationManager.SCREEN_WIDTH, ApplicationManager.SCREEN_HEIGHT));
@@ -19,6 +20,7 @@ public final class DisplayManager extends JFrame {
       setVisible(true);
    }
    
+   // sets up the canvas to be the desiredCanvas
    public void setCanvas(Canvas desiredCanvas) {
 	  if (canvas != null)
 		   remove(canvas);

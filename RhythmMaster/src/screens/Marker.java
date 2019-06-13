@@ -4,8 +4,9 @@ import java.awt.Color;
 import java.util.Observable;
 
 public class Marker extends DrawableRectangle {
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;	// auto generated to remove warning
 	
+	// final variables for better control over position/size/color
 	private static final int SIDE_LENGTH = 40;
 	private static final int HITBAR_TOP_Y = 560;
 	private static final int HITBAR_BOTTOM_Y = 610;
@@ -35,15 +36,18 @@ public class Marker extends DrawableRectangle {
 		return s;
 	}
 
+	// returns the rail index associated with this marker
 	public int getRailIndex() {
 		return railIndex;
 	}
 	
+	// sets the location of the marker
 	public void setLocation(int x, int y) {
 		super.setLocation(x, y);
 		y_coord.setValue(y);
 	}
 	
+	// addds an observer to the marker for hit detection purposes
 	public void addObserver(HitDetectionObserver obs) {
 		y_coord.addObserver(obs);
 	}

@@ -35,6 +35,7 @@ public class GameScreenController extends ScreenController {
 
 	static int MARKER_SPAWN_RATE;
 	
+	// finals for more control over object positions and colors
 	final Color railColor = Color.BLACK;
 	final int railSpacing = 150; 
 	final int railWidth = 10;
@@ -53,19 +54,25 @@ public class GameScreenController extends ScreenController {
 	final int progressBarWidth = hitBarWidth;
 	final int progressBarHeight = hitBarHeight / 10;
 	
+	// used for marker display and visuals
 	int markerIndex;
 	DrawableRectangle hitBar;
 	DrawableRectangle progressBar;
 	ArrayList<Marker> markers = new ArrayList<Marker>();
 	
+	// used for song playing and hit detection
 	SoundPlayer gameSongPlayer;
 	Song currentSong;
 	Status playerStatus = new Status();
 	HitDetectionObserver hitDetectionObserver;
+	
+	// used for threading
 	ScheduledExecutorService winLossScheduler;
 	ScheduledExecutorService markerScheduler;
 	ScheduledExecutorService hitDetect;
 	ScheduledExecutorService miscScheduler;
+	
+	// used for status display
 	JLabel streakValue;
 	JLabel streakLabel;
 	JLabel scoreLabel;
@@ -85,10 +92,12 @@ public class GameScreenController extends ScreenController {
 		setupMiscTimers();
 	}
 
-  private void setupMarkerTimer() {
+	// sets up the marker timer for multithreading use in spawing and moving the markers
+	private void setupMarkerTimer() {
 		markerIndex = 0;
 		TimerTask ttMarkerSpawn, ttMarkerPos, ttSongPos;
 		
+		// used for spawning the markers
 		ttMarkerSpawn = new TimerTask() {
 			@Override
 			public void run() {
@@ -102,6 +111,7 @@ public class GameScreenController extends ScreenController {
 			}
 		};
 
+		// used for moving/animating the markers
 		ttMarkerPos = new TimerTask() {
 			@Override
 			public void run() {
@@ -128,6 +138,7 @@ public class GameScreenController extends ScreenController {
 		markerScheduler.scheduleAtFixedRate(ttMarkerPos, 0, 10, TimeUnit.MILLISECONDS);
 	}
 	
+	// creates and spawns a marker on the appropriate rail
 	private void spawnMarkers() {
 		boolean[] beats = currentSong.getBitsAt(markerIndex);
 		Marker m;
@@ -179,6 +190,7 @@ public class GameScreenController extends ScreenController {
 		return screenCanvas;
 	}
 	
+	// sets up the progress bar on the canvas
 	private void setupProgressBar() {
 		progressBar = new DrawableRectangle(screenCenterX - this.progressBarWidth / 2, 50 - progressBarHeight/2 - 20, 
 				0, progressBarHeight, Color.WHITE);
@@ -190,6 +202,7 @@ public class GameScreenController extends ScreenController {
 		screenCanvas.addStaticDrawable(progressBarBacker);
 	}
 
+	// sets up the streak display on the canvas
 	private void setupStreak() {
 		streakValue = new JLabel("500");
 		streakLabel = new JLabel(NOTE_STREAK);
@@ -206,17 +219,16 @@ public class GameScreenController extends ScreenController {
 		}
 		if(font != null) {
 			streakValue.setFont(font);
+			font = font.deriveFont(22f);
 			streakLabel.setFont(font);
-			streakValue.setBounds(150, 335, 100, 30);
+			streakValue.setBounds(120, 335, 70, 30);
 			streakLabel.setBounds(200, 310, 150, 80);
 			screenCanvas.add(streakValue);
 			screenCanvas.add(streakLabel);
 		}
 	}
 	
-	/**
-	 * 
-	 */
+	// sets up the status labels on the canvas
 	private void setupStatusLabels() {
 		Font font;
 		
@@ -238,6 +250,7 @@ public class GameScreenController extends ScreenController {
 		}
 	}
 
+	// sets up the text to be shown in the canvas
 	private void setupText() {			
 		ImageIcon healthIcon = new ImageIcon(Main.class.getResource("../Images/componentImages/Game-Health.png"));		
 		JButton healthButton = new JButton(healthIcon);		
@@ -254,6 +267,7 @@ public class GameScreenController extends ScreenController {
 		screenCanvas.addButton(scoreButton);
 	}
 	
+	// sets up the key labels to be shown in the canvas
 	private void setupKeyLabels() {
 		Font font;
 		
@@ -287,6 +301,7 @@ public class GameScreenController extends ScreenController {
 		}
 	}
 	
+	// sets up the timer to be used to keep track of song position and streak count
 	private void setupMiscTimers() {
 		TimerTask ttStreak = new TimerTask( ) {
 			@Override
@@ -309,6 +324,7 @@ public class GameScreenController extends ScreenController {
 		miscScheduler.scheduleAtFixedRate(updateSongPosition, 0, 15, TimeUnit.MILLISECONDS);
 	}
 	
+	// displays the streak on the canvas
 	private void displayStreak() {
 		int currStreak = playerStatus.getCurrentStreak();
 		if(currStreak < 5) {
@@ -321,6 +337,7 @@ public class GameScreenController extends ScreenController {
 		}
 	}
   
+	// sets up the rails for display on the canvas
 	private void setupRails() {	
 		System.out.println("setting up rails!" + screenCenterX + " ");
 		
@@ -343,6 +360,7 @@ public class GameScreenController extends ScreenController {
 		screenCanvas.addStaticDrawable(rail4);
 	}
 
+	// sets up the hit bar for use on the canvas
 	private void setupHitBar() {
 		hitBar = new DrawableRectangle(screenCenterX - this.hitBarWidth / 2, 560 - hitBarHeight/2, hitBarWidth,
 				hitBarHeight, Color.BLACK);
@@ -350,10 +368,12 @@ public class GameScreenController extends ScreenController {
 		screenCanvas.addStaticDrawable(hitBar);
 	}
 	
+	// changes the color of the hitbar
 	public void changeHitBarColor(Color c) {
 		hitBar.setColor(c);
 	}
 
+	// quickly flashes the color of the hitbar
 	public void flashHitBarColor() {
 		Thread t = new Thread(new Runnable() {
 			@Override
@@ -370,6 +390,7 @@ public class GameScreenController extends ScreenController {
 		t.start();
 	}
 
+	// sets up the key input system for numerical keys 1,2,3,4
 	public void setupKeys() {
 		ActionMap actionMap = screenCanvas.getActionMap();
 		int focusCondition = JComponent.WHEN_IN_FOCUSED_WINDOW;
@@ -411,11 +432,13 @@ public class GameScreenController extends ScreenController {
 		}
 	}
 	
+	// on key press alert the observer and flash the hitbar
 	public void handleKeyPressed (int railIndex) {
 		hitDetectionObserver.registerKeypress(railIndex);
 		flashHitBarColor();
 	}
 
+	// play the appropriate game song as selected
 	private void playGameSong(int selection) {
 		System.out.println("play game song");
 		
@@ -424,10 +447,10 @@ public class GameScreenController extends ScreenController {
 		else
 			gameSongPlayer = new SoundPlayer(ApplicationManager.SONG_OPTIONS[selection], currentSong.getDelay());
 	}
-
+	
+	// setup another timer to check win and loss conditions on another thread
 	private void setupWinLossTimer() {
-		//playerStatus = new Status();
-
+		// lose if health is below minimum (check in intervals)
 		TimerTask checkHPLoss = new TimerTask() {
 			@Override
 			public void run() {
@@ -445,6 +468,7 @@ public class GameScreenController extends ScreenController {
 			}
 		};
 
+		// win if you reach the end of the song
 		TimerTask endOfSongWin = new TimerTask() {
 			@Override
 			public void run() {
@@ -463,6 +487,7 @@ public class GameScreenController extends ScreenController {
 							currentSong.getDelay() * 1000 + 2000000, TimeUnit.MICROSECONDS);
 	}
 
+	// displays loss message and returns to the main menu
 	private void handleLoss() {
 		markerScheduler.shutdown();
 		winLossScheduler.shutdownNow();
@@ -479,6 +504,7 @@ public class GameScreenController extends ScreenController {
 		requestScreenChangeTo(Screen.MAIN_MENU);
 	}
 
+	// displays win message and returns to main menu
 	private void handleWin() {
 		markerScheduler.shutdown();
 		winLossScheduler.shutdownNow();
@@ -493,6 +519,7 @@ public class GameScreenController extends ScreenController {
 		requestScreenChangeTo(Screen.MAIN_MENU);
 	}
 
+	// sets up an observer for song and missed notes
 	private void setupSongAndMissedNoteObs() {
 		currentSong = new Song(ApplicationManager.SELECTION);
 		MARKER_SPAWN_RATE = currentSong.getMicroSecPerBeat();

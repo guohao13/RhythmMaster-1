@@ -5,6 +5,7 @@ import java.util.Observer;
 
 public final class ApplicationManager implements Observer {
 
+	// statics for use across multiple classes
 	public static final String[] SONG_OPTIONS = { 	
 			"../Sounds/Butterfly.wav",
 			"../Sounds/WiiMenu.wav" };
@@ -20,6 +21,7 @@ public final class ApplicationManager implements Observer {
 	
 	public boolean screenIsFirst = false;
 	
+	// starts the user at the main menu screen
 	public ApplicationManager() {
 		displayManager = new DisplayManager();
 		toScreen(Screen.MAIN_MENU);
@@ -30,6 +32,7 @@ public final class ApplicationManager implements Observer {
 		toScreen((Screen)arg);		
 	}
 	
+	// changes the current screen to the desired screen
 	public void toScreen(Screen screen) {
 		if(currentScreen != null) {
 			currentScreen.exitAction(screen);

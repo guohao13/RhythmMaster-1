@@ -23,6 +23,7 @@ public class MainMenuScreenController extends ScreenController {
 		return screenCanvas;
 	}
 	
+	// sets up buttons for display on the canvas and regesters appropriate behaviors
 	private void setupButtons() {
 		ImageIcon startGameIcon = new ImageIcon(Main.class.getResource("../Images/componentImages/Menu-Select.png"));
 		JButton startGameButton = new JButton(startGameIcon);

@@ -21,6 +21,7 @@ public class DrawableRectangle extends Rectangle implements Drawable {
 		this.c = c;
 	}
 
+	// sets if the drawable rectangle should be filled
 	public void setFilled(boolean b) {
 		filled = b;
 	}

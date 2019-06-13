@@ -12,7 +12,7 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 
 public class Canvas extends JPanel {
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;	// needed to prevent warning
 	private Image background;
 	private List<JButton> canvasButtons = new ArrayList<JButton>();
 	private ArrayList<Drawable>staticDrawables = new ArrayList<Drawable>();
@@ -36,11 +36,13 @@ public class Canvas extends JPanel {
 		}
 	}
    
+	// sets the background to the background image
 	public void setBackground(String path) {
 		background = new ImageIcon(Main.class.getResource(path)).getImage();
 		repaint();
 	}
    
+	// adds a button to this panel
 	public JButton addButton(JButton button) {
 		canvasButtons.add(button);
 		add(button);
@@ -48,6 +50,7 @@ public class Canvas extends JPanel {
 		return button;
 	}
 	
+	// adds a generic component to this panel
 	public Component addComponent(Component c) {
 		add(c);
 		repaint();
@@ -62,18 +65,21 @@ public class Canvas extends JPanel {
 		return staticDrawables;
 	}
 	
+	// adds a drawable, which will be dynamically manipulated to this panel
 	synchronized public Drawable addDynamicDrawable(Drawable m) {
 		dynamicDrawables.add(m);
 		repaint();
 		return m;
 	}
 	
+	// adds a drawable, which is not expected to be manipulated to this panel
 	synchronized public Drawable addStaticDrawable(Drawable d) {
 		staticDrawables.add(d);
 		repaint();
 		return d;
 	}
 	
+	// removes all action listeners from all buttons in this panel
 	public void removeButtonListeners() {
 		for (JButton button : canvasButtons) {
 			for (ActionListener listener : button.getActionListeners()) {
@@ -82,6 +88,7 @@ public class Canvas extends JPanel {
 		}
 	}
 	
+	// removes the marker from the dynamic drawable list so it will not be redrawn
 	synchronized public void removeMarker(Marker m) {
 		dynamicDrawables.remove(m);
 	}	

@@ -10,6 +10,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 
 public class SettingsScreenController extends ScreenController {
+	// setup needed to display the sliding bars for display and control
 	private int BAR_WIDTH = 300, BAR_HEIGHT = 50, BORDER_WIDTH = 10;
 	DrawableRectangle volumeBar = new DrawableRectangle(ApplicationManager.SCREEN_WIDTH / 4 - BAR_WIDTH / 2, 
 			ApplicationManager.SCREEN_HEIGHT * 3 / 4 - BAR_HEIGHT / 2,
@@ -41,14 +42,17 @@ public class SettingsScreenController extends ScreenController {
 		return screenCanvas;
 	}
 
+	// sets the volume in application manager's static variable
 	private void setVolume() {
 		ApplicationManager.VOLUME = (float)volumeBar.getWidth()/BAR_WIDTH;
 	}
   
+	// sets the tolerance in the application manager's static variable
 	private void setTolerance() {
 		ApplicationManager.TOLERANCE = (float)difficultyBar.getWidth()/BAR_WIDTH;
 	}
 
+	// sets up the difficulty bar in the filled state with mouse click and drag listeners
 	private void setupDifficultyBar() {
 		difficultyBar.setFilled(true);
 		difficultyBacker.setFilled(true);
@@ -85,6 +89,7 @@ public class SettingsScreenController extends ScreenController {
 		});
 	}
 
+	// sets up the volume bar in the filled state with mouse click and drag listeners
 	private void setupVolumeBar() {
 		volumeBar.setFilled(true);
 		volumeBacker.setFilled(true);
@@ -120,6 +125,7 @@ public class SettingsScreenController extends ScreenController {
 		});
 	}
 
+	// sets up the apply button
 	private void setupButtons() {
 		ImageIcon applyIcon = new ImageIcon(Main.class.getResource("../Images/componentImages/Settings-Apply.png"));
 		JButton applyButton = new JButton(applyIcon);

@@ -23,6 +23,7 @@ public class SongMenuScreenController extends ScreenController {
 		return screenCanvas;
 	}
 
+	// sets up song selection buttons (one per song)
 	private void setupButtons() {
 		ImageIcon songsIcon = new ImageIcon(Main.class.getResource("../Images/componentImages/Song-Back.png"));
 		JButton songsButton = new JButton(songsIcon);

@@ -29,6 +29,7 @@ public class SoundPlayer {
 		playClip(path);
 	}
 	
+	// starts playing the song after a delay
 	public SoundPlayer(String path, int delay) {
 		stopClip();
 		audioIn = null;
@@ -49,10 +50,12 @@ public class SoundPlayer {
 		t.schedule(delayPlay, delay);		
 	}
 	
+	// plays the clip without looping
 	public void playClip(String path) {
 		playClip(path, 0);
 	}
 	
+	// plays the clip looping loops amount of times
 	public void playClip(String path, int loops) {
 		try {
 			stopClip();
@@ -69,6 +72,7 @@ public class SoundPlayer {
 		}		
 	}
 	
+	// stops the clip
 	public int stopClip() {
 		int ret = 0;
 		if (hasClip()) {
@@ -79,22 +83,27 @@ public class SoundPlayer {
 		return ret;
 	}
 	
+	// checks if there is a registered clip
 	public boolean hasClip() {
 		return currClip != null;
 	}
 	
+	// gets the current time of the clip in microseconds
 	public int getClipTime() {
 		return (int)currClip.getMicrosecondPosition();	// casting to an int should still provide sufficient capacity (~35 minutes)
 	}
 
+	// gets the length of the clip in microseconds
 	public int getClipLength() {
 		return (int)currClip.getMicrosecondLength();
 	}
 	
+	// gets the path of the current clip
 	public String getClipPath() {
 		return currPath;
 	}
 	
+	// sets volume on a non-linear scale in terms of intensity
 	public void setVolume(float desired) {
 		desired = desired > 1.0f ? 1.0f : desired < 0f ? 0f : desired; // clamp volume from 0 to 1
 		FloatControl volume = (FloatControl) currClip.getControl(FloatControl.Type.MASTER_GAIN);
@@ -103,6 +112,7 @@ public class SoundPlayer {
 		ApplicationManager.VOLUME = desired;
 	}
 	
+	// returns true if the clip is playing
 	public boolean isPlaying() {
 		return currClip.isActive();
 	}
