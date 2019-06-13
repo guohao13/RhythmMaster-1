@@ -188,8 +188,6 @@ public class GameScreenController extends ScreenController {
 				progressBarWidth, progressBarHeight, Color.BLACK);
 		progressBarBacker.setFilled(true);
 		screenCanvas.addStaticDrawable(progressBarBacker);
-		
-		
 	}
 
 	private void setupStreak() {
@@ -467,7 +465,7 @@ public class GameScreenController extends ScreenController {
 
 	private void handleLoss() {
 		markerScheduler.shutdown();
-		winLossScheduler.shutdown();
+		winLossScheduler.shutdownNow();
 		hitDetect.shutdown();
 		miscScheduler.shutdown();
 		
@@ -483,7 +481,7 @@ public class GameScreenController extends ScreenController {
 
 	private void handleWin() {
 		markerScheduler.shutdown();
-		winLossScheduler.shutdown();
+		winLossScheduler.shutdownNow();
 		hitDetect.shutdown();
 		miscScheduler.shutdown();
 		
