@@ -24,7 +24,8 @@ public class SettingsScreenController extends ScreenController {
 	DrawableRectangle difficultyBacker = new DrawableRectangle(ApplicationManager.SCREEN_WIDTH * 3 / 4 - BAR_WIDTH / 2 - BORDER_WIDTH,
 			ApplicationManager.SCREEN_HEIGHT * 3 / 4 - BAR_HEIGHT / 2 - BORDER_WIDTH, BAR_WIDTH + 2 * BORDER_WIDTH, 
 			BAR_HEIGHT + 2 * BORDER_WIDTH, Color.BLACK);
-
+	private int barYCoord = difficultyBar.y;
+	
 	public SettingsScreenController() {
 		screenType = Screen.SETTINGS;
 		screenMusicPath = "../Sounds/BadApple.wav";
@@ -44,12 +45,12 @@ public class SettingsScreenController extends ScreenController {
 
 	// sets the volume in application manager's static variable
 	private void setVolume() {
-		ApplicationManager.VOLUME = (float)volumeBar.getWidth()/BAR_WIDTH;
+		ApplicationManager.VOLUME = (float)volumeBar.getHeight()/BAR_HEIGHT;
 	}
   
 	// sets the tolerance in the application manager's static variable
 	private void setTolerance() {
-		ApplicationManager.TOLERANCE = (float)difficultyBar.getWidth()/BAR_WIDTH;
+		ApplicationManager.TOLERANCE = (float)difficultyBar.getHeight()/BAR_HEIGHT;
 	}
 
 	// sets up the difficulty bar in the filled state with mouse click and drag listeners
@@ -62,14 +63,15 @@ public class SettingsScreenController extends ScreenController {
 			public void mouseClicked(MouseEvent e) {
 				int mouseX = e.getX();
 				int mouseY = e.getY();
-				System.out.println("clicked! at " + mouseX + ", " + mouseY);
-				if (mouseY > difficultyBar.y && mouseY < difficultyBar.y + difficultyBar.height 
-								&& mouseX > difficultyBar.x && mouseX < difficultyBar.x+300) {
-					int newWidth = (mouseX > difficultyBar.x && mouseX < difficultyBar.x + 300) ? mouseX - difficultyBar.x : 0;
-					difficultyBar.setSize(newWidth, difficultyBar.height);
+				
+				if(difficultyBar.x < mouseX && mouseX < difficultyBar.x + BAR_WIDTH 
+					&& barYCoord < mouseY && mouseY < barYCoord + BAR_HEIGHT) {
+					int newHeight = barYCoord + BAR_HEIGHT - mouseY;
+					difficultyBar.setLocation(difficultyBar.x, mouseY);
+					difficultyBar.setSize(300, newHeight);
 					screenCanvas.repaint();
 					setTolerance();
-				}		
+				}
 			}
 		});
 	
@@ -78,13 +80,14 @@ public class SettingsScreenController extends ScreenController {
 				int mouseX = e.getX();
 				int mouseY = e.getY();
 
-				if (mouseY > difficultyBar.y && mouseY < difficultyBar.y + difficultyBar.height
+				if (mouseY > barYCoord && mouseY < barYCoord + difficultyBar.height
 						&& mouseX > difficultyBar.x && mouseX < difficultyBar.x + 300) {
-					int newWidth = (mouseX > difficultyBar.x && mouseX < difficultyBar.x + 300)	? mouseX - difficultyBar.x : 0;
-					difficultyBar.setSize(newWidth, difficultyBar.height);
+					int newHeight = barYCoord + BAR_HEIGHT - mouseY;
+					difficultyBar.setLocation(difficultyBar.x, mouseY);
+					difficultyBar.setSize(300, newHeight);
 					screenCanvas.repaint();
 					setTolerance();
-				}				
+				}	
 			} 
 		});
 	}
@@ -99,11 +102,13 @@ public class SettingsScreenController extends ScreenController {
 			public void mouseClicked(MouseEvent e) {
 				int mouseX = e.getX();
 				int mouseY = e.getY();
-				System.out.println("clicked! at " + mouseX + ", " + mouseY);
-				if (mouseY > volumeBar.y && mouseY < volumeBar.y + volumeBar.height && mouseX > volumeBar.x
+				//System.out.println("clicked! at " + mouseX + ", " + mouseY);
+				if (mouseY > barYCoord && mouseY < barYCoord + volumeBar.height && mouseX > volumeBar.x
 						&& mouseX < volumeBar.x + 300) {
-					int newWidth = (mouseX > volumeBar.x && mouseX < volumeBar.x + 300) ? mouseX - volumeBar.x : 0;
-					volumeBar.setSize(newWidth, volumeBar.height);
+					//int newWidth = (mouseX > volumeBar.x && mouseX < volumeBar.x + 300) ? mouseX - volumeBar.x : 0;
+					int newHeight = barYCoord + BAR_HEIGHT - mouseY;
+					volumeBar.setLocation(volumeBar.x, mouseY);
+					volumeBar.setSize(300, newHeight);
 					screenCanvas.repaint();
 					setVolume();
 				}
@@ -113,11 +118,14 @@ public class SettingsScreenController extends ScreenController {
 			public void mouseDragged(MouseEvent e) {
 				int mouseX = e.getX();
 				int mouseY = e.getY();
-				System.out.println("clicked! at " + mouseX + ", " + mouseY);
-				if (mouseY > volumeBar.y && mouseY < volumeBar.y + volumeBar.height && mouseX > volumeBar.x
+				
+				if (mouseY > barYCoord && mouseY < barYCoord + volumeBar.height && mouseX > volumeBar.x
 						&& mouseX < volumeBar.x + 300) {
-					int newWidth = (mouseX > volumeBar.x && mouseX < volumeBar.x + 300) ? mouseX - volumeBar.x : 0;
-					volumeBar.setSize(newWidth, volumeBar.height);
+					//System.out.println("vol - clicked! at " + mouseX + ", " + mouseY);
+					//int newWidth = (mouseX > volumeBar.x && mouseX < volumeBar.x + 300) ? mouseX - volumeBar.x : 0;
+					int newHeight = barYCoord + BAR_HEIGHT - mouseY;
+					volumeBar.setLocation(volumeBar.x, mouseY);
+					volumeBar.setSize(300, newHeight);
 					screenCanvas.repaint();
 					setVolume();
 				}

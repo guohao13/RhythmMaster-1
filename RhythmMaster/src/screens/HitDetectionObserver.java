@@ -9,7 +9,6 @@ public class HitDetectionObserver implements Observer {
 	private GameScreenController parent;
 	private Canvas canvas;
 	private ArrayList<Marker>[] markersInHitbar = new ArrayList[4];
-	private float streakMultiplier;
 	
 	HitDetectionObserver(GameScreenController gsc, Canvas c) {
 		this.parent = gsc;
