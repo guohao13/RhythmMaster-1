@@ -3,12 +3,17 @@ package screens;
 import java.util.Observable;
 import java.util.Observer;
 
-public class ApplicationManager implements Observer {
+public final class ApplicationManager implements Observer {
 
+	// statics for use across multiple classes
+	public static final String[] SONG_OPTIONS = { 	
+			"../Sounds/Butterfly.wav",
+			"../Sounds/WiiMenu.wav" };
+	
 	public static final int SCREEN_HEIGHT = 720;
 	public static final int SCREEN_WIDTH = 1280;
 	public static float VOLUME = 1f;
-	public static int TOLERANCE = 0;
+	public static float TOLERANCE = 1f;
 	public static int SELECTION = 0; 
 	
 	public ScreenController currentScreen;
@@ -16,6 +21,7 @@ public class ApplicationManager implements Observer {
 	
 	public boolean screenIsFirst = false;
 	
+	// starts the user at the main menu screen
 	public ApplicationManager() {
 		displayManager = new DisplayManager();
 		toScreen(Screen.MAIN_MENU);
@@ -26,6 +32,7 @@ public class ApplicationManager implements Observer {
 		toScreen((Screen)arg);		
 	}
 	
+	// changes the current screen to the desired screen
 	public void toScreen(Screen screen) {
 		if(currentScreen != null) {
 			currentScreen.exitAction(screen);
