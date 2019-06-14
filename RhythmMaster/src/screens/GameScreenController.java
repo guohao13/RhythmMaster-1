@@ -26,6 +26,7 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
+import javax.swing.SwingConstants;
 
 import song.Song;
 import status.Status;
@@ -50,7 +51,8 @@ public class GameScreenController extends ScreenController {
 	final int rail4x = screenCenterX + railSpacing * 3 / 2 - railWidth / 2;
 	final int dy = 2;
 	final String NOTE_STREAK = "<html>note<br/>streak!</html>";
-	
+	final String MULTIPLIER = "x multiplier!!";
+
 	final int progressBarWidth = hitBarWidth;
 	final int progressBarHeight = hitBarHeight / 10;
 	
@@ -65,6 +67,7 @@ public class GameScreenController extends ScreenController {
 	Song currentSong;
 	Status playerStatus = new Status();
 	HitDetectionObserver hitDetectionObserver;
+	float currentStreakMultiplier = 1;
 	
 	// used for threading
 	ScheduledExecutorService winLossScheduler;
@@ -75,6 +78,7 @@ public class GameScreenController extends ScreenController {
 	// used for status display
 	JLabel streakValue;
 	JLabel streakLabel;
+	JLabel multiplierLabel;
 	JLabel scoreLabel;
 	JLabel hpLabel;
 	
@@ -179,11 +183,6 @@ public class GameScreenController extends ScreenController {
 		setupHitBar();
 		setupProgressBar();
 		setupText();
-		
-		streakValue = new JLabel("   ");
-		streakValue.setMinimumSize(new Dimension(30, 30));
-		streakLabel = new JLabel("                            ");
-		streakLabel.setMinimumSize(new Dimension(40, 60));
 		setupStatusLabels();
 		setupKeyLabels();
 		
@@ -206,6 +205,7 @@ public class GameScreenController extends ScreenController {
 	private void setupStreak() {
 		streakValue = new JLabel("500");
 		streakLabel = new JLabel(NOTE_STREAK);
+		multiplierLabel = new JLabel(MULTIPLIER);
 		
 		Font font = null;
 		try {
@@ -223,8 +223,13 @@ public class GameScreenController extends ScreenController {
 			streakLabel.setFont(font);
 			streakValue.setBounds(120, 335, 70, 30);
 			streakLabel.setBounds(200, 310, 150, 80);
+			multiplierLabel.setBounds(50, 380, 250, 50);
+			multiplierLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+			font = font.deriveFont(24f);
+			multiplierLabel.setFont(font);
 			screenCanvas.add(streakValue);
 			screenCanvas.add(streakLabel);
+			screenCanvas.add(multiplierLabel);
 		}
 	}
 	
@@ -327,13 +332,34 @@ public class GameScreenController extends ScreenController {
 	// displays the streak on the canvas
 	private void displayStreak() {
 		int currStreak = playerStatus.getCurrentStreak();
-		if(currStreak < 5) {
-			streakValue.setText("");
-			streakLabel.setText("");
-		}
-		else {
+		
+		if(currStreak >= 100) {
 			streakLabel.setText(NOTE_STREAK);
 			streakValue.setText(Integer.toString(currStreak));
+			multiplierLabel.setText("5" + MULTIPLIER);
+			multiplierLabel.setForeground(Color.RED);
+			
+		}
+		else if(currStreak >= 50) {
+			streakLabel.setText(NOTE_STREAK);
+			streakValue.setText(Integer.toString(currStreak));
+			multiplierLabel.setText("3.5" + MULTIPLIER);
+			multiplierLabel.setForeground(Color.GREEN);
+		}
+		else if(currStreak >= 20) {
+			streakLabel.setText(NOTE_STREAK);
+			streakValue.setText(Integer.toString(currStreak));
+			multiplierLabel.setText("2" + MULTIPLIER);
+		}
+		else if(currStreak >= 5) {
+			streakLabel.setText(NOTE_STREAK);
+			streakValue.setText(Integer.toString(currStreak));
+		}
+		else {
+			streakValue.setText("");
+			streakLabel.setText("");
+			multiplierLabel.setText("");
+			multiplierLabel.setForeground(Color.WHITE);
 		}
 	}
   
@@ -531,5 +557,9 @@ public class GameScreenController extends ScreenController {
 				hitDetectionObserver = new HitDetectionObserver(GameScreenController.this, screenCanvas);
 			}
 		}, 0, TimeUnit.SECONDS);
+	}
+	
+	public void setMultiplier(float f) {
+		currentStreakMultiplier = f;
 	}
 }

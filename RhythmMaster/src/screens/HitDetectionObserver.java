@@ -9,6 +9,7 @@ public class HitDetectionObserver implements Observer {
 	private GameScreenController parent;
 	private Canvas canvas;
 	private ArrayList<Marker>[] markersInHitbar = new ArrayList[4];
+	private float streakMultiplier;
 	
 	HitDetectionObserver(GameScreenController gsc, Canvas c) {
 		this.parent = gsc;
@@ -18,7 +19,7 @@ public class HitDetectionObserver implements Observer {
 	}
 
 	@Override
-	synchronized public void update(Observable o, Object obj) {
+	public void update(Observable o, Object obj) {
 		Marker m = (Marker) obj;
 		int railIndex = m.getRailIndex();
 		ArrayList<Marker> rail = markersInHitbar[railIndex];
